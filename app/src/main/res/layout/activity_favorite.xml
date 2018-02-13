@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.mac.bihu.Activity.FavoriteActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/favorite_back_btn"
+            android:text="\u003C"
+            android:textColor="#FFFFFF"
+            android:layout_width="40dp"
+            android:background="#4586CA"
+            android:textSize="30dp"
+            android:layout_height="?actionBarSize"
+            />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/favorite_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="#4586CA"
+            app:title="我的收藏"
+            app:titleTextColor="#FFFFFF"
+            >
+
+        </android.support.v7.widget.Toolbar>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/favorite_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

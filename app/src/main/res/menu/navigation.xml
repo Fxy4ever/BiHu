@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:title="首页"
+            android:id="@+id/item_1"
+            android:icon="@drawable/home"
+            />
+        <item
+            android:title="提问"
+            android:id="@+id/item_2"
+            android:icon="@drawable/questions"
+            />
+        <item
+            android:title="我的收藏"
+            android:id="@+id/item_3"
+            android:icon="@drawable/favorite"
+            />
+    </group>
+
+    <item android:title="账户管理">
+        <menu>
+            <item
+                android:id="@+id/little_item1"
+                android:title="更换头像"
+                android:icon="@drawable/people"/>
+
+            <item
+                android:id="@+id/little_item2"
+                android:title="更改密码"
+                android:icon="@drawable/change_password"/>
+            <item
+                android:id="@+id/little_item3"
+                android:title="退出登陆"
+                android:icon="@drawable/sign_out"/>
+        </menu>
+    </item>
+
+
+
+
+</menu>

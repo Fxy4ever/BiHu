@@ -3,57 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center|top"
+    android:gravity="center"
     android:orientation="vertical"
-    android:background="#2970C5">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="210dp" >
+    android:background="@drawable/sky"
+    >
+   <TextView
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/main_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textSize="70dp"
+       android:textColor="#FFFFFF"
+       android:gravity="center"
+       android:text="Bihu"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:padding="5dp"
-            android:orientation="vertical"
-            android:layout_alignParentBottom="true"
-            android:gravity="center_horizontal"
-            android:background="#66000000" >
 
-            <TextView
-                android:id="@+id/carouse_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="18dp"
-                android:singleLine="true"
-                android:text="这是轮播图的字" />
-
-            <LinearLayout
-                android:id="@+id/carouse_ll_pointContainer"
-                android:layout_width="50dp"
-                android:layout_height="20dp"
-                android:orientation="horizontal">
-            </LinearLayout>
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:textColor="#FFFFFF"
-        android:text="Hi!   有朋自远方来"/>
 
     <android.support.v7.widget.CardView
+        android:layout_marginBottom="100dp"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="15dp"
         app:cardElevation="20dp">
         <LinearLayout
             android:layout_width="match_parent"

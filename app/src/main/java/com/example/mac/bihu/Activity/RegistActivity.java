@@ -21,6 +21,15 @@ public class RegistActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regist);
+        Button back = findViewById(R.id.Reg_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegistActivity.this,LoginActivity.class);
+                startActivity(intent);
+                RegistActivity.this.finish();
+            }
+        });
         Button btn1 = findViewById(R.id.Reg_reg);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -28,19 +37,17 @@ public class RegistActivity extends AppCompatActivity {
                 /**
                  * 这里实现注册逻辑 成功跳转登陆界面 失败Toast
                  */
-                final EditText Reg_Username = findViewById(R.id.Reg_user);
-                final EditText Reg_Password = findViewById(R.id.Reg_password);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+                       EditText Reg_Username = findViewById(R.id.Reg_user);
+                       EditText Reg_Password = findViewById(R.id.Reg_password);
+
                         String url = "http://bihu.jay86.com/register.php";
                         StringBuilder content = new StringBuilder();
                         content.append("username="+Reg_Username.getText().toString()
                         +"&password="+Reg_Password.getText().toString());
-                        final String response = NetUtils.post(url,content.toString());
-                        handler.post(new Runnable() {
+
+                        NetUtils.post(url, content.toString(), new NetUtils.Callback() {
                             @Override
-                            public void run() {
+                            public void onResponse(String response) {
                                 try {
                                     JSONObject obj = new JSONObject(response);
                                     int status = obj.getInt("status");
@@ -56,8 +63,7 @@ public class RegistActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                    }
-                }).start();
+
             }
         });
     }

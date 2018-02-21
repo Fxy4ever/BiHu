@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,21 +40,18 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private int NORMAL = 0;
     private int END = 2;
 
-    public mRecyclerViewAdapter(List<Bitmap> imageslist, List<String> datelist, List<String> recentlist,
-                                int[] answerCountlist, List<String> authorNamelist, List<Bitmap> authorAvatarlist,
-                                List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive, List<String> recentlist1,
-                                boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite) {
-        this.imageslist = imageslist;
+
+    public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
+                                List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
+                                List<String> recentlist, boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite) {
         this.datelist = datelist;
-        this.recentlist = recentlist;
         this.answerCountlist = answerCountlist;
         this.authorNamelist = authorNamelist;
-        this.authorAvatarlist = authorAvatarlist;
         this.titlelist = titlelist;
         this.contentlist = contentlist;
         this.exciting = exciting;
         this.naive = naive;
-        this.recentlist = recentlist1;
+        this.recentlist = recentlist;
         this.is_exciting = is_exciting;
         this.is_naive = is_naive;
         this.is_favorite = is_favorite;
@@ -61,7 +59,6 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        Log.e("fxy", "已经绑定的namelist.size = " + authorNamelist.size());
         if(position == titlelist.size())
             return FOOTER;
         else if (position==0)
@@ -163,7 +160,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             ((NormalViewHolder) holder).recent.setText(recentlist.get(position));
             ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
-            ((NormalViewHolder) holder).avatar.setImageBitmap(authorAvatarlist.get(position));
+//            ((NormalViewHolder) holder).avatar.setImageBitmap(authorAvatarlist.get(position));
 
 
 
@@ -234,9 +231,9 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         ImageView avatar;
 //        ImageView images;
         Button comments;
-        Button good;
-        Button bad;
-        Button like;
+        ImageButton good;
+        ImageButton bad;
+        ImageButton like;
 
         public NormalViewHolder(View itemView) {
             super(itemView);

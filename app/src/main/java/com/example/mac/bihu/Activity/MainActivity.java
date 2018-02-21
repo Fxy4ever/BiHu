@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,18 +43,16 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private mUser user;
 
+    static int j = 1;
+
     private TextView usernameTv;
     private RoundedImageView userAvatar;
     private Handler handler = new Handler();
-    private Handler handler1 = new Handler();
-    private Handler handler2 = new Handler();
 
 
-    private List<Bitmap> imageslist;
     private List<String> datelist;
     private int[] answerCountlist;
     private List<String> authorNamelist;
-    private List<Bitmap> authorAvatarlist;
     private List<String> titlelist;
     private List<String> contentlist;
     private int[] exciting;
@@ -62,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private boolean[] is_exciting;
     private boolean[] is_naive;
     private boolean[] is_favorite;
-
+    private int[] questionId;
 
     private mRecyclerViewAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -78,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isRefresh;
 
+    private boolean is_good = false;
+    private boolean is_bad = false;
+    private boolean is_like = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +89,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         initHeader();
         setToggle();
         setListener();
+        initData();
         initRecyclerView();
+        setScrollListner();
         initSwipe();
         initButtonClick();
         Toast.makeText(MainActivity.this, "欢迎来到Bihu", Toast.LENGTH_LONG).show();
@@ -163,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         startActivity(intent2);
                         break;
                     case R.id.little_item1:
-                        Toast.makeText(MainActivity.this, "更换头像还没做呢"
-                                , Toast.LENGTH_SHORT).show();
+                        Intent intent3 = new Intent(MainActivity.this, ChangeAvatarActivity.class);
+                        startActivity(intent3);
                         break;
                     /**
                      * 更改密码的dialog
@@ -201,37 +206,29 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                                 if (firstPassword.length() > 0 && SecondPassword.length() > 0) {
                                     if (firstPassword.equals(SecondPassword)) {
-                                        new Thread(new Runnable() {
+                                        user = (mUser) getApplication();
+                                        String token = user.getToken();
+
+                                        StringBuilder ask1 = new StringBuilder();
+                                        String url = "http://bihu.jay86.com/changePassword.php";
+                                        ask1.append("password=" + SecondPassword + "&token=" + token);
+                                        NetUtils.post(url, ask1.toString(), new NetUtils.Callback() {
                                             @Override
-                                            public void run() {
-                                                user = (mUser) getApplication();
-                                                String token = user.getToken();
-
-                                                StringBuilder ask1 = new StringBuilder();
-                                                String url = "http://bihu.jay86.com/changePassword.php";
-                                                ask1.append("password=" + SecondPassword + "&token=" + token);
-
-                                                final String response1 = NetUtils.post(url, ask1.toString());
-                                                handler.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        try {
-                                                            JSONObject obj = new JSONObject(response1);
-                                                            int status = obj.getInt("status");
-                                                            if (status == 200) {
-                                                                Toast.makeText(MainActivity.this, "更改成功", Toast.LENGTH_SHORT).show();
-                                                                ChangePasswordDialog.hide();
-                                                            } else {
-                                                                Toast.makeText(MainActivity.this, status, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
+                                            public void onResponse(String response) {
+                                                try {
+                                                    JSONObject obj = new JSONObject(response);
+                                                    int status = obj.getInt("status");
+                                                    if (status == 200) {
+                                                        Toast.makeText(MainActivity.this, "更改成功", Toast.LENGTH_SHORT).show();
+                                                        ChangePasswordDialog.hide();
+                                                    } else {
+                                                        Toast.makeText(MainActivity.this, status, Toast.LENGTH_SHORT).show();
                                                     }
-                                                });
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
-                                        }).start();
+                                        });
 
                                     } else {
                                         Toast.makeText(MainActivity.this, "两次密码不同 更改失败", Toast.LENGTH_SHORT).show();
@@ -244,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                         break;
                     case R.id.little_item3:
-                        Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent3);
+                        Intent intent4 = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent4);
                         MainActivity.this.finish();
                         break;
 
@@ -256,93 +253,62 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
 
+    public void initData(){
+        Log.d("fxy", "initData: ");
+        String url = "http://bihu.jay86.com/getQuestionList.php";
+        StringBuilder getItem = new StringBuilder();
+        String token = user.getToken();
+        getItem.append("page=0" + "&token=" + token);
+        NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject1 = new JSONObject(response);
+                    String data = jsonObject1.getString("data");
+                    JSONObject jsonObject2 = new JSONObject(data);
+                    String questions = jsonObject2.getString("questions");
+                    JSONArray jsonArray = new JSONArray(questions);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        final JSONObject object = jsonArray.getJSONObject(i);
+                        titlelist.add(object.getString("title"));
+                        contentlist.add(object.getString("content"));
+                        datelist.add(object.getString("date"));
+                        exciting[i] = object.getInt("exciting");
+                        naive[i] = object.getInt("naive");
+                        recentlist.add(object.getString("recent"));
+                        answerCountlist[i] = object.getInt("answerCount");
+                        authorNamelist.add(object.getString("authorName"));
+                        is_exciting[i] = object.getBoolean("is_exciting");
+                        is_naive[i] = object.getBoolean("is_naive");
+                        is_favorite[i] = object.getBoolean("is_favorite");
+                        questionId[i] = object.getInt("id");
+                    }
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     public void initRecyclerView() {
-        
+
         titlelist = new ArrayList<>();
         contentlist = new ArrayList<>();
-        imageslist = new ArrayList<>();
         datelist = new ArrayList<>();
         exciting = new int[40];
         naive = new int[40];
         recentlist = new ArrayList<>();
         answerCountlist = new int[40];
         authorNamelist = new ArrayList<>();
-        authorAvatarlist = new ArrayList<>();
         is_exciting = new boolean[40];
         is_naive = new boolean[40];
         is_favorite = new boolean[40];
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url = "http://bihu.jay86.com/getQuestionList.php";
-                StringBuilder getItem = new StringBuilder();
-                String token = user.getToken();
-                getItem.append("page=0" + "&token=" + token);
-                final String getItemrespon = NetUtils.post(url, getItem.toString());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONObject jsonObject1 = new JSONObject(getItemrespon);
-                            String data = jsonObject1.getString("data");
-                            JSONObject jsonObject2 = new JSONObject(data);
-                            String questions = jsonObject2.getString("questions");
-                            JSONArray jsonArray = new JSONArray(questions);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                final JSONObject object = jsonArray.getJSONObject(i);
-                                titlelist.add(object.getString("title"));
-                                contentlist.add(object.getString("content"));
-                                datelist.add(object.getString("date"));
-                                exciting[i] = object.getInt("exciting");
-                                naive[i] = object.getInt("naive");
-                                recentlist.add(object.getString("recent"));
-                                answerCountlist[i] = object.getInt("answerCount");
-                                authorNamelist.add(object.getString("authorName"));
-                                if (object.getString("images") != null) {
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Bitmap images = null;
-                                            try {
-                                                images = NetUtils.getBitmap(object.getString("images"));
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                            imageslist.add(images);
-                                        }
-                                    }).start();
-                                }
-                                if (object.getString("authorAvatar") != null) {
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Bitmap avatar = null;
-                                            try {
-                                                avatar = NetUtils.getBitmap(object.getString("authorAvatar"));
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                            authorAvatarlist.add(avatar);
-                                        }
-                                    }).start();
-                                }
-                                is_exciting[i] = object.getBoolean("is_exciting");
-                                is_naive[i] = object.getBoolean("is_naive");
-                                is_favorite[i] = object.getBoolean("is_favorite");
-                            }
+        questionId = new int[40];
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
 
-            }
-        }).start();
         recyclerView = findViewById(R.id.main_rec);
-        adapter = new mRecyclerViewAdapter(imageslist, datelist, recentlist, answerCountlist, authorNamelist
-                , authorAvatarlist, titlelist, contentlist, exciting, naive, recentlist, is_exciting, is_naive, is_favorite);
+        adapter = new mRecyclerViewAdapter(datelist,answerCountlist,authorNamelist,titlelist,contentlist,exciting,naive,
+                recentlist,is_exciting,is_naive,is_favorite);
         recyclerView.setAdapter(adapter);
         /**
          * item点击事件
@@ -350,9 +316,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         adapter.onItemClickListner(new mRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void OnClickItem(View view, int position) {
-                Toast.makeText(MainActivity.this, "点击了第" + position + "个item",
-                        Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, itemTouchActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, itemTouchActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("qid",questionId[position]);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -362,6 +330,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
          * 上拉加载
          */
 
+
+    }
+    public void setScrollListner(){
         recyclerView.addOnScrollListener(new MyOnScrollListener(layoutManager) {
             @Override
             public void onLoad(int curPage) {
@@ -374,86 +345,44 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
 
-    int j = 1;
     public void loading(){
-        new Handler().postDelayed(new Runnable() {
+        Log.d("fxy","Load" );
+        String url = "http://bihu.jay86.com/getQuestionList.php";
+        StringBuilder getItem = new StringBuilder();
+        String token = user.getToken();
+        getItem.append("page=" +j+ "&token=" + token);
+        NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
             @Override
-            public void run() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String url = "http://bihu.jay86.com/getQuestionList.php";
-                        StringBuilder getItem = new StringBuilder();
-                        String token = user.getToken();
-                        getItem.append("page=" +j+ "&token=" + token);
-                        final String getItemrespon = NetUtils.post(url, getItem.toString());
-                        Log.d("fxy", "loading start ");
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    JSONObject jsonObject1 = new JSONObject(getItemrespon);
-                                    String data = jsonObject1.getString("data");
-                                    JSONObject jsonObject2 = new JSONObject(data);
-                                    String questions = jsonObject2.getString("questions");
-                                    JSONArray jsonArray = new JSONArray(questions);
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        final JSONObject object = jsonArray.getJSONObject(i);
-                                        titlelist.add(object.getString("title"));
-                                        contentlist.add(object.getString("content"));
-                                        datelist.add(object.getString("date"));
-                                        exciting[i] = object.getInt("exciting");
-                                        naive[i] = object.getInt("naive");
-                                        recentlist.add(object.getString("recent"));
-                                        answerCountlist[i] = object.getInt("answerCount");
-                                        authorNamelist.add(object.getString("authorName"));
-                                        Log.e("fxy", "namelist.size = " + authorNamelist.size());
-                                        if (object.getString("images") != null) {
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Bitmap images = null;
-                                                    try {
-                                                        images = NetUtils.getBitmap(object.getString("images"));
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    imageslist.add(images);
-                                                }
-                                            }).start();
-                                        }
-                                        if (object.getString("authorAvatar") != null) {
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Bitmap avatar = null;
-                                                    try {
-                                                        avatar = NetUtils.getBitmap(object.getString("authorAvatar"));
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    authorAvatarlist.add(avatar);
-                                                }
-                                            }).start();
-                                        }
-                                        is_exciting[i] = object.getBoolean("is_exciting");
-                                        is_naive[i] = object.getBoolean("is_naive");
-                                        is_favorite[i] = object.getBoolean("is_favorite");
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject1 = new JSONObject(response);
+                    String data = jsonObject1.getString("data");
+                    JSONObject jsonObject2 = new JSONObject(data);
+                    String questions = jsonObject2.getString("questions");
+                    JSONArray jsonArray = new JSONArray(questions);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        final JSONObject object = jsonArray.getJSONObject(i);
+                        titlelist.add(object.getString("title"));
+                        contentlist.add(object.getString("content"));
+                        datelist.add(object.getString("date"));
+                        exciting[i] = object.getInt("exciting");
+                        naive[i] = object.getInt("naive");
+                        recentlist.add(object.getString("recent"));
+                        answerCountlist[i] = object.getInt("answerCount");
+                        authorNamelist.add(object.getString("authorName"));
+                        is_exciting[i] = object.getBoolean("is_exciting");
+                        is_naive[i] = object.getBoolean("is_naive");
+                        is_favorite[i] = object.getBoolean("is_favorite");
+                        questionId[i] = object.getInt("id");
                     }
-                }).start();
 
-                adapter.notifyDataSetChanged();
-                j++;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        },2000);
+        });
+        j++;
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -471,22 +400,164 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 startActivity(intent);
             }
         });
+        /**
+         * good
+         */
         adapter.setOnItemGoodClickListener(new mRecyclerViewAdapter.onItemGoodListener() {
             @Override
-            public void onGoodClick(int i) {
-                Toast.makeText(MainActivity.this, "第" + i + "个good", Toast.LENGTH_SHORT).show();
+            public void onGoodClick(final int i) {
+                View view = recyclerView.getChildAt(i);
+                 final ImageButton good = view.findViewById(R.id.main_good);
+                 final TextView good_num = view.findViewById(R.id.main_good_number);
+
+                if(is_good==false){
+                    good.setBackgroundResource(R.drawable.good_blue);
+                    is_good=true;
+                    final String url = "http://bihu.jay86.com/exciting.php";
+                    final StringBuilder ask = new StringBuilder();
+                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
+                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                int status = jsonObject.getInt("status");
+                                if(status==200){
+                                    good.setBackgroundResource(R.drawable.good_blue);
+                                    is_good=true;
+                                    good_num.setText(String.valueOf((naive[i]+1)));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }else{
+                    good.setBackgroundResource(R.drawable.good);
+                    is_good=false;
+                     String url = "http://bihu.jay86.com/cancelExciting.php";
+                     StringBuilder ask = new StringBuilder();
+                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
+                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                int status = jsonObject.getInt("status");
+                                if(status==200){
+                                    good.setBackgroundResource(R.drawable.good);
+                                    is_good=false;
+                                    good_num.setText(String.valueOf((naive[i])));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
             }
         });
+        /**
+         * bad
+         */
         adapter.setOnItemBadClickListener(new mRecyclerViewAdapter.onItemBadListener() {
             @Override
-            public void onBadClick(int i) {
-                Toast.makeText(MainActivity.this, "第" + i + "个bad", Toast.LENGTH_SHORT).show();
+            public void onBadClick(final int i) {
+                View view = recyclerView.getChildAt(i);
+                final ImageButton bad = view.findViewById(R.id.main_bad);
+                final TextView bad_num = view.findViewById(R.id.main_bad_number);
+                if(is_bad==false){
+                    final String url = "http://bihu.jay86.com/naive.php";
+                    final StringBuilder ask = new StringBuilder();
+                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
+                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                int status = jsonObject.getInt("status");
+                                if(status == 200){
+                                    bad.setBackgroundResource(R.drawable.bad_blue);
+                                    is_bad=true;
+                                    bad_num.setText(String.valueOf((naive[i]+1)));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }else{
+                    String url = "http://bihu.jay86.com/cancelNaive.php";
+                    StringBuilder ask = new StringBuilder();
+                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
+                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                int status = jsonObject.getInt("status");
+                                if(status==200){
+                                    bad.setBackgroundResource(R.drawable.bad);
+                                    is_bad=false;
+                                    bad_num.setText(String.valueOf((naive[i])));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                }
             }
         });
+        /**
+         * like
+         */
         adapter.setOnItemLikeClickListener(new mRecyclerViewAdapter.onItemLikeListener() {
             @Override
-            public void onLikeClick(int i) {
-                Toast.makeText(MainActivity.this, "第" + i + "个like", Toast.LENGTH_SHORT).show();
+            public void onLikeClick(final int i) {
+                View view = recyclerView.getChildAt(i);
+                final ImageButton like = view.findViewById(R.id.main_like);
+                if(is_like==false){
+                    String url = "http://bihu.jay86.com/favorite.php";
+                    StringBuilder ask = new StringBuilder();
+                    ask.append("qid="+questionId[i]+"&token="+user.getToken());
+                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                int status = jsonObject.getInt("status");
+                                if(status==200){
+                                    like.setBackgroundResource(R.drawable.like_blue);
+                                    is_like=true;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                }else{
+                    String url = "http://bihu.jay86.com/cancelFavorite.php";
+                    StringBuilder ask = new StringBuilder();
+                    ask.append("qid="+questionId[i]+"&token="+user.getToken());
+                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                int status = jsonObject.getInt("status");
+                                if(status==200){
+                                    like.setBackgroundResource(R.drawable.like);
+                                    is_like=false;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
             }
         });
     }
@@ -504,104 +575,60 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     public void onRefresh() {
-        Log.d("fxy", "onRefresh");
+        Log.d("fxy", "Refresh");
         if (!isRefresh) {
             isRefresh = true;
-            new Handler().postDelayed(new Runnable() {
+            swipeRefreshLayout.setRefreshing(false);
+            titlelist.clear();
+            contentlist.clear();
+            datelist.clear();
+            recentlist.clear();
+            authorNamelist.clear();
+            for (int i = 0; i < titlelist.size(); i++) {
+                exciting[i] = 0;
+                naive[i] = 0;
+                answerCountlist[i] = 0;
+                is_exciting[i] = false;
+                is_naive[i] = false;
+                is_favorite[i] = false;
+                questionId[i] = 0;
+            }
+            String url = "http://bihu.jay86.com/getQuestionList.php";
+            StringBuilder getItem = new StringBuilder();
+            String token = user.getToken();
+            getItem.append("page=0"+"&token="+token);
+            //加载
+            NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
                 @Override
-                public void run() {
-                    swipeRefreshLayout.setRefreshing(false);
-                    titlelist.clear();
-                    contentlist.clear();
-                    imageslist.clear();
-                    datelist.clear();
-                    recentlist.clear();
-                    authorNamelist.clear();
-                    authorAvatarlist.clear();
-                    for (int i = 0; i < titlelist.size(); i++) {
-                        exciting[i] = 0;
-                        naive[i] = 0;
-                        answerCountlist[i] = 0;
-                        is_exciting[i] = false;
-                        is_naive[i] = false;
-                        is_favorite[i] = false;
-                    }
-                    //加载
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String url = "http://bihu.jay86.com/getQuestionList.php";
-                            StringBuilder getItem = new StringBuilder();
-                            String token = user.getToken();
-                            getItem.append("page=0"+"&token="+token);
-                            final String getItemrespon = NetUtils.post(url,getItem.toString());
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        JSONObject jsonObject1 = new JSONObject(getItemrespon);
-                                        String data = jsonObject1.getString("data");
-                                        JSONObject jsonObject2 = new JSONObject(data);
-                                        String questions = jsonObject2.getString("questions");
-                                        JSONArray jsonArray = new JSONArray(questions);
-                                        for(int i = 0;i < jsonArray.length();i++){
-                                            final JSONObject object = jsonArray.getJSONObject(i);
-                                            titlelist.add(object.getString("title"));
-                                            contentlist.add(object.getString("content"));
-                                            datelist.add(object.getString("date"));
-                                            exciting[i] = object.getInt("exciting");
-                                            naive[i] = object.getInt("naive");
-                                            recentlist.add(object.getString("recent"));
-                                            answerCountlist[i] = object.getInt("answerCount");
-                                            authorNamelist.add(object.getString("authorName"));
-                                            Log.e("fxy", "namelist.size = "+ authorNamelist.size());
-                                            if(object.getString("images")!=null){
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Bitmap images = null;
-                                                        try {
-                                                            images = NetUtils.getBitmap(object.getString("images"));
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        imageslist.add(images);
-                                                    }
-                                                }).start();
-                                            }
-                                            if(object.getString("authorAvatar")!=null){
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Bitmap avatar = null;
-                                                        try {
-                                                            avatar = NetUtils.getBitmap(object.getString("authorAvatar"));
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        authorAvatarlist.add(avatar);
-                                                    }
-                                                }).start();
-                                            }
-                                            is_exciting[i] = object.getBoolean("is_exciting");
-                                            is_naive[i] = object.getBoolean("is_naive");
-                                            is_favorite[i] = object.getBoolean("is_favorite");
-                                        }
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject1 = new JSONObject(response);
+                        String data = jsonObject1.getString("data");
+                        JSONObject jsonObject2 = new JSONObject(data);
+                        String questions = jsonObject2.getString("questions");
+                        JSONArray jsonArray = new JSONArray(questions);
+                        for(int i = 0;i < jsonArray.length();i++){
+                            final JSONObject object = jsonArray.getJSONObject(i);
+                            titlelist.add(object.getString("title"));
+                            contentlist.add(object.getString("content"));
+                            datelist.add(object.getString("date"));
+                            exciting[i] = object.getInt("exciting");
+                            naive[i] = object.getInt("naive");
+                            recentlist.add(object.getString("recent"));
+                            answerCountlist[i] = object.getInt("answerCount");
+                            authorNamelist.add(object.getString("authorName"));
+                            is_exciting[i] = object.getBoolean("is_exciting");
+                            is_naive[i] = object.getBoolean("is_naive");
+                            is_favorite[i] = object.getBoolean("is_favorite");
                         }
-                    }).start();
 
-
-                    adapter.notifyDataSetChanged();
-                    isRefresh = false;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }, 2000);
+            });
+            adapter.notifyDataSetChanged();
+            isRefresh = false;
         }
     }
 }

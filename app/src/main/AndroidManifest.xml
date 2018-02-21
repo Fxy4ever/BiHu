@@ -25,7 +25,8 @@
         <activity android:name=".Activity.FavoriteActivity" />
         <activity android:name=".Activity.AskQuestionActivity" />
         <activity android:name=".Activity.itemTouchActivity" />
-        <activity android:name=".Activity.AnswerActivity"></activity>
+        <activity android:name=".Activity.AnswerActivity" />
+        <activity android:name=".Activity.ChangeAvatarActivity"></activity>
     </application>
 
 </manifest>

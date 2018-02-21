@@ -40,20 +40,14 @@ public class AskQuestionActivity extends AppCompatActivity {
                 final String title = title_edit.getText().toString();
                 final String content = content_edit.getText().toString();
                 if(title.length()>0&&content.length()>0){
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
                             user = (mUser)getApplication();
                             String token = user.getToken();
                             String url = "http://bihu.jay86.com/question.php";
                             StringBuilder ask = new StringBuilder();
                             ask.append("title="+title+"&content="+content+"&token="+token);
-                            Log.d("fxy","ask question content" + ask.toString());
-                            final String response = NetUtils.post(url,ask.toString());
-                            Log.d("fxy","ask question"+response);
-                            handler.post(new Runnable() {
+                            NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
                                 @Override
-                                public void run() {
+                                public void onResponse(String response) {
                                     try {
                                         JSONObject object = new JSONObject(response);
                                         int status = object.getInt("status");
@@ -71,8 +65,7 @@ public class AskQuestionActivity extends AppCompatActivity {
                                 }
                             });
 
-                        }
-                    }).start();
+
 
                 }
                 else if(title.length()==0||content.length()==0){

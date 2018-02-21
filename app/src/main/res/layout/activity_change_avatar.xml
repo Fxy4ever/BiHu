@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/sky"
+    tools:context="com.example.mac.bihu.Activity.ChangeAvatarActivity">
+
+    <Button
+        android:id="@+id/change_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:background="#60000000"
+        android:text="拍照"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
+    <Button
+        android:id="@+id/change_picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:background="#60000000"
+        android:text="从相册上传"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
+    <Button
+        android:id="@+id/change_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#60000000"
+        android:textColor="#000000"
+        android:text="返回"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="400dp" />
+
+</LinearLayout>

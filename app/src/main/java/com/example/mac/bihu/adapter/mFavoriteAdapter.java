@@ -57,7 +57,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        Log.e("fxy", "已经绑定的namelist.size = " + authorNamelist.size());
+        Log.d("fxy", "list.size="+titlelist.size());
         if(position == titlelist.size())
             return FOOTER;
         else

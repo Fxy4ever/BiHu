@@ -89,7 +89,7 @@
                     android:id="@+id/main_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="3"
+                    android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:text="This is a test"
                     android:textSize="17dp" />
@@ -134,12 +134,13 @@
                         android:text="(0)"
                         android:textSize="13dp" />
 
-                    <Button
+                    <ImageButton
+
                         android:focusable="false"
                         android:id="@+id/main_good"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:background="@drawable/good" />
+                        android:background="@drawable/good_selector" />
 
                     <TextView
                         android:id="@+id/main_good_number"
@@ -148,12 +149,12 @@
                         android:text="(0)"
                         android:textSize="13dp" />
 
-                    <Button
+                    <ImageButton
                         android:focusable="false"
                         android:id="@+id/main_bad"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:background="@drawable/bad" />
+                        android:background="@drawable/bad_selector" />
 
                     <TextView
                         android:id="@+id/main_bad_number"
@@ -162,12 +163,12 @@
                         android:text="(0)"
                         android:textSize="13dp" />
 
-                    <Button
+                    <ImageButton
                         android:focusable="false"
                         android:id="@+id/main_like"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:background="@drawable/like" />
+                        android:background="@drawable/like_selector" />
                     <TextView
                         android:layout_width="20dp"
                         android:layout_height="wrap_content" />

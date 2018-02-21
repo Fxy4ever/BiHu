@@ -3,6 +3,8 @@ package com.example.mac.bihu.Utils;
 import android.accounts.NetworkErrorException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -14,13 +16,40 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  * Created by HP on 2017/12/28.
  * 这是一个利用HttpURLConnection实现的工具类
  */
 
-public class NetUtils  {
+public class NetUtils{
+
+
+    public interface  Callback{
+        void onResponse(String response);
+    }
+    public interface  getBitmapCallback{
+        void mBitmap(Bitmap mBitmap);
+    }
+
+    public static void post(final String url, final String content, final Callback callback){
+        final android.os.Handler handler = new android.os.Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String response = NetUtils.post(url,content);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResponse(response);
+                    }
+                });
+            }
+        }).start();
+    }
 
     public static String post(String url,String content){
         BufferedReader reader = null;
@@ -70,6 +99,22 @@ public class NetUtils  {
         }
         return null;
     }
+    public static void getBitmap(final String url,final getBitmapCallback callback){
+        final android.os.Handler handler = new android.os.Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Bitmap bitmap = NetUtils.getBitmap(url);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.mBitmap(bitmap);
+                    }
+                });
+            }
+        }).start();
+    }
+
     public static Bitmap getBitmap(String url){
         URL mURL;
         Bitmap bitmap=null;

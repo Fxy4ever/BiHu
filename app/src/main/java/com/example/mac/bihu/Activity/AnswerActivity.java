@@ -36,47 +36,44 @@ public class AnswerActivity extends AppCompatActivity {
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String content = editText.getText().toString();
-                        user = (mUser) getApplication();
-                        String token = user.getToken();
-                        String url = "http://bihu.jay86.com/answer.php";
-                        Bundle bundle = getIntent().getExtras();
-                        int id = bundle.getInt("id");
-                        Log.d("fxy", "qid: "+id);
-                        StringBuilder answer = new StringBuilder();
-                        answer.append("qid="+id+"&content="+content+"&token="+token);
-                        Log.d("fxy", "answer: "+answer.toString());
-                        String response = NetUtils.post(url,answer.toString());
-                        Log.d("fxy", "response="+response);
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            int status = jsonObject.getInt("status");
-                            if(status==200){
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(AnswerActivity.this,"回答成功",Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(AnswerActivity.this,MainActivity.class);
-                                        startActivity(intent);
-                                        AnswerActivity.this.finish();
-                                    }
-                                });
-                            }else{
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(AnswerActivity.this,"网络错误 回答失败",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                String content = editText.getText().toString();
+                user = (mUser) getApplication();
+                String token = user.getToken();
+                String url = "http://bihu.jay86.com/answer.php";
+                Bundle bundle = getIntent().getExtras();
+                int id = bundle.getInt("id");
+                StringBuilder answer = new StringBuilder();
+                answer.append("qid="+id+"&content="+content+"&token="+token);
+                Log.d("fxy", "answer: "+answer.toString());
+               NetUtils.post(url, answer.toString(), new NetUtils.Callback() {
+                   @Override
+                   public void onResponse(String response) {
+                       try {
+                           JSONObject jsonObject = new JSONObject(response);
+                           int status = jsonObject.getInt("status");
+                           if(status==200){
+                               runOnUiThread(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       Toast.makeText(AnswerActivity.this,"回答成功",Toast.LENGTH_SHORT).show();
+                                       Intent intent = new Intent(AnswerActivity.this,MainActivity.class);
+                                       startActivity(intent);
+                                       AnswerActivity.this.finish();
+                                   }
+                               });
+                           }else{
+                               runOnUiThread(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       Toast.makeText(AnswerActivity.this,"网络错误 回答失败",Toast.LENGTH_SHORT).show();
+                                   }
+                               });
+                           }
+                       } catch (JSONException e) {
+                           e.printStackTrace();
+                       }
+                   }
+               });
             }
         });
     }

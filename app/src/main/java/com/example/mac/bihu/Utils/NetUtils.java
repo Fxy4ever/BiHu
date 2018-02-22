@@ -36,12 +36,11 @@ public class NetUtils{
     }
 
     public static void post(final String url, final String content, final Callback callback){
-        final android.os.Handler handler = new android.os.Handler();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final String response = NetUtils.post(url,content);
-                handler.post(new Runnable() {
+                new android.os.Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         callback.onResponse(response);
@@ -50,6 +49,7 @@ public class NetUtils{
             }
         }).start();
     }
+
 
     public static String post(String url,String content){
         BufferedReader reader = null;
@@ -100,12 +100,12 @@ public class NetUtils{
         return null;
     }
     public static void getBitmap(final String url,final getBitmapCallback callback){
-        final android.os.Handler handler = new android.os.Handler();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final Bitmap bitmap = NetUtils.getBitmap(url);
-                handler.post(new Runnable() {
+                new android.os.Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         callback.mBitmap(bitmap);

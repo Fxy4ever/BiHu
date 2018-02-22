@@ -1,7 +1,6 @@
 package com.example.mac.bihu.Activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 import com.example.mac.bihu.adapter.MyInsideRecyclerAdapter;
+import com.example.mac.bihu.mUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;

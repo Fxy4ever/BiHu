@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 import com.example.mac.bihu.adapter.mFavoriteAdapter;
-import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
+import com.example.mac.bihu.mUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +35,7 @@ public class FavoriteActivity extends AppCompatActivity {
     private List<String> datelist;
     private int[] answerCountlist;
     private List<String> authorNamelist;
-    private List<Bitmap> authorAvatarlist;
+    private List<String> authorAvatarlist;
     private List<String> titlelist;
     private List<String> contentlist;
     private int[] exciting;
@@ -53,13 +53,13 @@ public class FavoriteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
-        initNet();
+        initThread();
         init();
+        initToolbar();
         initButtonClick();
+
     }
-    public void initNet(){
-        toolbar = findViewById(R.id.favorite_toolbar);
-        toolbar.setTitle("我的收藏");
+    public void initThread(){
         titlelist = new ArrayList<>();
         contentlist = new ArrayList<>();
         imageslist = new ArrayList<>();
@@ -73,88 +73,63 @@ public class FavoriteActivity extends AppCompatActivity {
         is_exciting = new boolean[40];
         is_naive = new boolean[40];
 
-                        String url = "http://bihu.jay86.com/getFavoriteList.php";
-                        StringBuilder getItem = new StringBuilder();
-                        user =(mUser) getApplication();
-                        String token = user.getToken();
-                        getItem.append("page=0" + "&token=" + token);
-                        NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
-                            @Override
-                            public void onResponse(String response) {
-                                try {
-                                    JSONObject jsonObject1 = new JSONObject(response);
-                                    String data = jsonObject1.getString("data");
-                                    JSONObject jsonObject2 = new JSONObject(data);
-                                    String questions = jsonObject2.getString("questions");
-                                    JSONArray jsonArray = new JSONArray(questions);
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        final JSONObject object = jsonArray.getJSONObject(i);
-                                        titlelist.add(object.getString("title"));
-                                        contentlist.add(object.getString("content"));
-                                        datelist.add(object.getString("date"));
-                                        exciting[i] = object.getInt("exciting");
-                                        naive[i] = object.getInt("naive");
-                                        recentlist.add(object.getString("recent"));
-                                        answerCountlist[i] = object.getInt("answerCount");
-                                        authorNamelist.add(object.getString("authorName"));
-                                        Log.d("fxy", ""+titlelist.size());
-                                        if (object.getString("images") != null) {
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Bitmap images = null;
-                                                    try {
-                                                        images = NetUtils.getBitmap(object.getString("images"));
-                                                        imageslist.add(images);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }).start();
-                                        }
-                                        if (object.getString("authorAvatar") != null) {
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Bitmap avatar = null;
-                                                    try {
-                                                        avatar = NetUtils.getBitmap(object.getString("authorAvatar"));
-                                                        authorAvatarlist.add(avatar);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }).start();
-                                        }
-                                        is_exciting[i] = object.getBoolean("is_exciting");
-                                        is_naive[i] = object.getBoolean("is_naive");
-                                    }
-                                    Log.d("fxy", "namelist.size="+authorNamelist.size());
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "http://bihu.jay86.com/getFavoriteList.php";
+                StringBuilder getItem = new StringBuilder();
+                user =(mUser) getApplication();
+                String token = user.getToken();
+                getItem.append("page=0" + "&token=" + token);
+                NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("fxy",""+response);
+                            JSONObject jsonObject1 = new JSONObject(response);
+                            String data = jsonObject1.getString("data");
+                            JSONObject jsonObject2 = new JSONObject(data);
+                            String questions = jsonObject2.getString("questions");
+                            JSONArray jsonArray = new JSONArray(questions);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                final JSONObject object = jsonArray.getJSONObject(i);
+                                titlelist.add(object.getString("title"));
+                                contentlist.add(object.getString("content"));
+                                datelist.add(object.getString("date"));
+                                exciting[i] = object.getInt("exciting");
+                                naive[i] = object.getInt("naive");
+                                recentlist.add(object.getString("recent"));
+                                answerCountlist[i] = object.getInt("answerCount");
+                                authorNamelist.add(object.getString("authorName"));
+                                is_exciting[i] = object.getBoolean("is_exciting");
+                                is_naive[i] = object.getBoolean("is_naive");
                             }
-                        });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
+                        answerCountlist, authorNamelist, authorAvatarlist, titlelist,
+                        contentlist, exciting, naive, recentlist, is_exciting, is_naive);
+
+            }
+        }).start();
+    }
+    public void initToolbar(){
+        toolbar = findViewById(R.id.favorite_toolbar);
+        toolbar.setTitle("我的收藏");
 
     }
     public void init(){
-
-
-        Log.d("fxy", "即将要绑定的size"+authorNamelist.size());
         recyclerView=findViewById(R.id.favorite_recyclerview);
         layoutManager = new LinearLayoutManager(this);
-
-        adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
-                answerCountlist, authorNamelist, authorAvatarlist, titlelist,
-                contentlist, exciting, naive, recentlist, is_exciting, is_naive);
-
+        Log.d("fxy",""+titlelist.size());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         setTitle("我的收藏");
         setSupportActionBar(toolbar);
-
-
     }
     public void initButtonClick(){
         Button btn1 = findViewById(R.id.favorite_back_btn);

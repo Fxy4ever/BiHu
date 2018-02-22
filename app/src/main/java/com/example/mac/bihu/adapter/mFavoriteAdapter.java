@@ -12,7 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mac.bihu.R;
+import com.example.mac.bihu.Utils.NetUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +30,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<String> datelist;
     private int[]        answerCountlist;
     private List<String> authorNamelist;
-    private List<Bitmap> authorAvatarlist;
+    private List<String> authorAvatarlist;
     private List<String> titlelist;
     private List<String> contentlist;
     private int[]         exciting;
@@ -37,7 +43,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int NORMAL = 0;
 
     public mFavoriteAdapter(List<Bitmap> imageslist, List<String> datelist, List<String> recentlist,
-                                int[] answerCountlist, List<String> authorNamelist, List<Bitmap> authorAvatarlist,
+                                int[] answerCountlist, List<String> authorNamelist, List<String> authorAvatarlist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive, List<String> recentlist1,
                                 boolean[] is_exciting, boolean[] is_naive) {
         this.imageslist = imageslist;
@@ -57,12 +63,13 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        Log.d("fxy", "list.size="+titlelist.size());
+        Log.d("fxy", "size="+titlelist.size()   );
         if(position == titlelist.size())
             return FOOTER;
         else
             return NORMAL;
     }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -134,10 +141,23 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof NormalViewHolder){
-
             /**
              * 绑定数据
              */
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                        @Override
+                        public void mBitmap(Bitmap mBitmap) {
+                            if(mBitmap!=null){
+                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                            }
+                        }
+                    });
+                }
+            }).start();
+
             ((NormalViewHolder) holder).title.setText(titlelist.get(position));
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));
             ((NormalViewHolder) holder).date.setText(datelist.get(position));
@@ -146,7 +166,12 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((NormalViewHolder) holder).recent.setText(recentlist.get(position));
             ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
-            ((NormalViewHolder) holder).avatar.setImageBitmap(authorAvatarlist.get(position));
+            if(is_exciting[position]){
+                ((NormalViewHolder) holder).good.setBackgroundResource(R.drawable.good_blue);
+            }
+            if(is_naive[position]){
+                ((NormalViewHolder) holder).bad.setBackgroundResource(R.drawable.bad_blue);
+            }
 
 
             //comments绑定

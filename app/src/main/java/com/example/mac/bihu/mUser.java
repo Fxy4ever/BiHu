@@ -1,4 +1,4 @@
-package com.example.mac.bihu.Activity;
+package com.example.mac.bihu;
 
 import android.app.Application;
 

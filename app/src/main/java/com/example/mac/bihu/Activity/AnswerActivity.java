@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
+import com.example.mac.bihu.mUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;

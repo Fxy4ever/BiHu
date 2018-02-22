@@ -1,5 +1,6 @@
 package com.example.mac.bihu.adapter;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,10 +12,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.mac.bihu.Activity.MainActivity;
 import com.example.mac.bihu.R;
+import com.example.mac.bihu.Utils.NetUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by mac on 2018/2/4.
@@ -25,7 +36,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private List<String> datelist;
     private int[]        answerCountlist;
     private List<String> authorNamelist;
-    private List<Bitmap> authorAvatarlist;
+    private List<String> authorAvatarlist;
     private List<String> titlelist;
     private List<String> contentlist;
     private int[]         exciting;
@@ -43,7 +54,8 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
-                                List<String> recentlist, boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite) {
+                                List<String> recentlist, boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite
+    ,List<String> authorAvatarlist ) {
         this.datelist = datelist;
         this.answerCountlist = answerCountlist;
         this.authorNamelist = authorNamelist;
@@ -55,19 +67,19 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.is_exciting = is_exciting;
         this.is_naive = is_naive;
         this.is_favorite = is_favorite;
+        this.authorAvatarlist = authorAvatarlist;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position == titlelist.size())
+        if(position == titlelist.size()&&position!=0)
             return FOOTER;
         else if (position==0)
             return HEADER;
-//        else if(position==21)
-//            return END;
         else
             return NORMAL;
     }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -147,11 +159,26 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-      if(holder instanceof NormalViewHolder){
-
+       if(holder instanceof NormalViewHolder){
           /**
            * 绑定数据
            */
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "onBindeViewHolder:" +position+ authorAvatarlist );
+                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                        @Override
+                        public void mBitmap(Bitmap mBitmap) {
+                            if(authorAvatarlist.get(position)==null){
+                                System.out.println("123");
+                            }else{
+                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                            }
+                        }
+                    });
+                }
+            }).start();
             ((NormalViewHolder) holder).title.setText(titlelist.get(position));
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));
             ((NormalViewHolder) holder).date.setText(datelist.get(position));
@@ -160,7 +187,15 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             ((NormalViewHolder) holder).recent.setText(recentlist.get(position));
             ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
-//            ((NormalViewHolder) holder).avatar.setImageBitmap(authorAvatarlist.get(position));
+            if(is_exciting[position]){
+                ((NormalViewHolder) holder).good.setBackgroundResource(R.drawable.good_blue);
+            }
+            if(is_naive[position]){
+                ((NormalViewHolder) holder).bad.setBackgroundResource(R.drawable.bad_blue);
+            }
+            if(is_favorite[position]){
+                ((NormalViewHolder) holder).like.setBackgroundResource(R.drawable.like_blue);
+            }
 
 
 

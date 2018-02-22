@@ -2,7 +2,6 @@ package com.example.mac.bihu.Activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -27,9 +26,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mac.bihu.R;
-import com.example.mac.bihu.Listener.MyOnScrollListener;
+import com.example.mac.bihu.Listener.EndlessRecyclerViewScrollListener;
 import com.example.mac.bihu.Utils.NetUtils;
 import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
+import com.example.mac.bihu.mUser;
 import com.example.mac.bihu.view.MyDialog;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -43,7 +43,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private mUser user;
 
-    static int j = 1;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     private TextView usernameTv;
     private RoundedImageView userAvatar;
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private List<String> authorNamelist;
     private List<String> titlelist;
     private List<String> contentlist;
+    private List<String> authorAvatarlist;
     private int[] exciting;
     private int[] naive;
     private List<String> recentlist;
@@ -89,11 +90,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         initHeader();
         setToggle();
         setListener();
-        initData();
+        initNewThread();
         initRecyclerView();
-        setScrollListner();
-        initSwipe();
         initButtonClick();
+        initSwipe();
+        setScrollListner();
         Toast.makeText(MainActivity.this, "欢迎来到Bihu", Toast.LENGTH_LONG).show();
     }
 
@@ -134,7 +135,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }
             }).start();
         } else {
-            userAvatar.setBackgroundResource(R.drawable.b);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    userAvatar.setBackgroundResource(R.drawable.avatar);
+                }
+            });
         }
     }
 
@@ -252,13 +258,71 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
     }
+    public void initNewThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadData();
+                loadmore();
+            }
+        }).start();
+    }
+    public void loadData(){
+        titlelist = new ArrayList<>();
+        contentlist = new ArrayList<>();
+        datelist = new ArrayList<>();
+        exciting = new int[40];
+        naive = new int[40];
+        recentlist = new ArrayList<>();
+        answerCountlist = new int[40];
+        authorAvatarlist = new ArrayList<>();
+        authorNamelist = new ArrayList<>();
+        is_exciting = new boolean[40];
+        is_naive = new boolean[40];
+        is_favorite = new boolean[40];
+        questionId = new int[40];
 
-    public void initData(){
-        Log.d("fxy", "initData: ");
         String url = "http://bihu.jay86.com/getQuestionList.php";
         StringBuilder getItem = new StringBuilder();
         String token = user.getToken();
         getItem.append("page=0" + "&token=" + token);
+        NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject1 = new JSONObject(response);
+                    String data = jsonObject1.getString("data");
+                    JSONObject jsonObject2 = new JSONObject(data);
+                    String questions = jsonObject2.getString("questions");
+                    JSONArray jsonArray = new JSONArray(questions);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        final JSONObject object = jsonArray.getJSONObject(i);
+                        titlelist.add(object.getString("title"));
+                        contentlist.add(object.getString("content"));
+                        datelist.add(object.getString("date"));
+                        exciting[i] = object.getInt("exciting");
+                        naive[i] = object.getInt("naive");
+                        recentlist.add(object.getString("recent"));
+                        authorAvatarlist.add(object.getString("authorAvatar"));
+                        answerCountlist[i] = object.getInt("answerCount");
+                        authorNamelist.add(object.getString("authorName"));
+                        is_exciting[i] = object.getBoolean("is_exciting");
+                        is_naive[i] = object.getBoolean("is_naive");
+                        is_favorite[i] = object.getBoolean("is_favorite");
+                        questionId[i] = object.getInt("id");
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    public void loadmore(){
+        String url = "http://bihu.jay86.com/getQuestionList.php";
+        StringBuilder getItem = new StringBuilder();
+        String token = user.getToken();
+        getItem.append("page=1" + "&token=" + token);
         NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
             @Override
             public void onResponse(String response) {
@@ -291,24 +355,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
     public void initRecyclerView() {
-
-        titlelist = new ArrayList<>();
-        contentlist = new ArrayList<>();
-        datelist = new ArrayList<>();
-        exciting = new int[40];
-        naive = new int[40];
-        recentlist = new ArrayList<>();
-        answerCountlist = new int[40];
-        authorNamelist = new ArrayList<>();
-        is_exciting = new boolean[40];
-        is_naive = new boolean[40];
-        is_favorite = new boolean[40];
-        questionId = new int[40];
-
-
         recyclerView = findViewById(R.id.main_rec);
         adapter = new mRecyclerViewAdapter(datelist,answerCountlist,authorNamelist,titlelist,contentlist,exciting,naive,
-                recentlist,is_exciting,is_naive,is_favorite);
+                recentlist,is_exciting,is_naive,is_favorite,authorAvatarlist);
         recyclerView.setAdapter(adapter);
         /**
          * item点击事件
@@ -333,57 +382,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     }
     public void setScrollListner(){
-        recyclerView.addOnScrollListener(new MyOnScrollListener(layoutManager) {
+        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
-            public void onLoad(int curPage) {
-                if (layoutManager.getItemCount() <40) {
-                    loading();
-                } else {
-                    Toast.makeText(MainActivity.this, "无法加载更多了", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    public void loading(){
-        Log.d("fxy","Load" );
-        String url = "http://bihu.jay86.com/getQuestionList.php";
-        StringBuilder getItem = new StringBuilder();
-        String token = user.getToken();
-        getItem.append("page=" +j+ "&token=" + token);
-        NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject1 = new JSONObject(response);
-                    String data = jsonObject1.getString("data");
-                    JSONObject jsonObject2 = new JSONObject(data);
-                    String questions = jsonObject2.getString("questions");
-                    JSONArray jsonArray = new JSONArray(questions);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        final JSONObject object = jsonArray.getJSONObject(i);
-                        titlelist.add(object.getString("title"));
-                        contentlist.add(object.getString("content"));
-                        datelist.add(object.getString("date"));
-                        exciting[i] = object.getInt("exciting");
-                        naive[i] = object.getInt("naive");
-                        recentlist.add(object.getString("recent"));
-                        answerCountlist[i] = object.getInt("answerCount");
-                        authorNamelist.add(object.getString("authorName"));
-                        is_exciting[i] = object.getBoolean("is_exciting");
-                        is_naive[i] = object.getBoolean("is_naive");
-                        is_favorite[i] = object.getBoolean("is_favorite");
-                        questionId[i] = object.getInt("id");
+            public void onLoadMore(int currentPage) {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
             }
         });
-        j++;
-        adapter.notifyDataSetChanged();
     }
+
+
 
     /**
      * item里面的button点击

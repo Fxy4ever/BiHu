@@ -2,7 +2,7 @@ package com.example.mac.bihu.Activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,8 +24,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mac.bihu.R;
 import com.example.mac.bihu.Listener.EndlessRecyclerViewScrollListener;
+import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
 import com.example.mac.bihu.mUser;
@@ -43,11 +42,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private mUser user;
 
-    private EndlessRecyclerViewScrollListener scrollListener;
 
     private TextView usernameTv;
     private RoundedImageView userAvatar;
-    private Handler handler = new Handler();
 
 
     private List<String> datelist;
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private NavigationView navigationView;
-    private RecyclerView recyclerView;
+    static RecyclerView recyclerView;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isRefresh;
@@ -91,10 +88,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setToggle();
         setListener();
         initNewThread();
-        initRecyclerView();
-        initButtonClick();
         initSwipe();
-        setScrollListner();
         Toast.makeText(MainActivity.this, "欢迎来到Bihu", Toast.LENGTH_LONG).show();
     }
 
@@ -258,15 +252,54 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
     }
+
     public void initNewThread(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 loadData();
-                loadmore();
+                String url = "http://bihu.jay86.com/getQuestionList.php";
+                StringBuilder getItem = new StringBuilder();
+                String token = user.getToken();
+                getItem.append("page=0" + "&token=" + token);
+                NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject1 = new JSONObject(response);
+                            String data = jsonObject1.getString("data");
+                            JSONObject jsonObject2 = new JSONObject(data);
+                            String questions = jsonObject2.getString("questions");
+                            JSONArray jsonArray = new JSONArray(questions);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                final JSONObject object = jsonArray.getJSONObject(i);
+                                titlelist.add(object.getString("title"));
+                                contentlist.add(object.getString("content"));
+                                datelist.add(object.getString("date"));
+                                exciting[i] = object.getInt("exciting");
+                                naive[i] = object.getInt("naive");
+                                recentlist.add(object.getString("recent"));
+                                authorAvatarlist.add(object.getString("authorAvatar"));
+                                answerCountlist[i] = object.getInt("answerCount");
+                                authorNamelist.add(object.getString("authorName"));
+                                is_exciting[i] = object.getBoolean("is_exciting");
+                                is_naive[i] = object.getBoolean("is_naive");
+                                is_favorite[i] = object.getBoolean("is_favorite");
+                                questionId[i] = object.getInt("id");
+                            }
+                            initRecyclerView();
+                            initButtonClick();
+                            setScrollListner();
+                            loadmore();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         }).start();
     }
+
     public void loadData(){
         titlelist = new ArrayList<>();
         contentlist = new ArrayList<>();
@@ -281,42 +314,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         is_naive = new boolean[40];
         is_favorite = new boolean[40];
         questionId = new int[40];
-
-        String url = "http://bihu.jay86.com/getQuestionList.php";
-        StringBuilder getItem = new StringBuilder();
-        String token = user.getToken();
-        getItem.append("page=0" + "&token=" + token);
-        NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject1 = new JSONObject(response);
-                    String data = jsonObject1.getString("data");
-                    JSONObject jsonObject2 = new JSONObject(data);
-                    String questions = jsonObject2.getString("questions");
-                    JSONArray jsonArray = new JSONArray(questions);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        final JSONObject object = jsonArray.getJSONObject(i);
-                        titlelist.add(object.getString("title"));
-                        contentlist.add(object.getString("content"));
-                        datelist.add(object.getString("date"));
-                        exciting[i] = object.getInt("exciting");
-                        naive[i] = object.getInt("naive");
-                        recentlist.add(object.getString("recent"));
-                        authorAvatarlist.add(object.getString("authorAvatar"));
-                        answerCountlist[i] = object.getInt("answerCount");
-                        authorNamelist.add(object.getString("authorName"));
-                        is_exciting[i] = object.getBoolean("is_exciting");
-                        is_naive[i] = object.getBoolean("is_naive");
-                        is_favorite[i] = object.getBoolean("is_favorite");
-                        questionId[i] = object.getInt("id");
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
     public void loadmore(){
         String url = "http://bihu.jay86.com/getQuestionList.php";
@@ -375,11 +372,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        /**
-         * 上拉加载
-         */
-
-
     }
     public void setScrollListner(){
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -417,16 +409,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
          */
         adapter.setOnItemGoodClickListener(new mRecyclerViewAdapter.onItemGoodListener() {
             @Override
-            public void onGoodClick(final int i) {
+            public void onGoodClick(int i) {
                 View view = recyclerView.getChildAt(i);
-                 final ImageButton good = view.findViewById(R.id.main_good);
-                 final TextView good_num = view.findViewById(R.id.main_good_number);
-
+                 ImageButton good = view.findViewById(R.id.main_good);
+                 TextView good_num = view.findViewById(R.id.main_good_number);
+                good.setBackgroundResource(R.drawable.good_blue);
+                good_num.setText(String.valueOf((naive[i]+1)));
                 if(is_good==false){
+                    is_good = true;
                     good.setBackgroundResource(R.drawable.good_blue);
-                    is_good=true;
-                    final String url = "http://bihu.jay86.com/exciting.php";
-                    final StringBuilder ask = new StringBuilder();
+                    String url = "http://bihu.jay86.com/exciting.php";
+                    StringBuilder ask = new StringBuilder();
                     ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
                     NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
                         @Override
@@ -435,9 +428,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 JSONObject jsonObject = new JSONObject(response);
                                 int status = jsonObject.getInt("status");
                                 if(status==200){
-                                    good.setBackgroundResource(R.drawable.good_blue);
-                                    is_good=true;
-                                    good_num.setText(String.valueOf((naive[i]+1)));
+                                    Log.d("点赞", "good: succeed!");
+                                }else{
+                                    Log.d("点赞", "good: failed!");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -445,8 +438,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
                     });
                 }else{
+                    is_good = false;
                     good.setBackgroundResource(R.drawable.good);
-                    is_good=false;
+                    good_num.setText(String.valueOf((naive[i])));
+
                      String url = "http://bihu.jay86.com/cancelExciting.php";
                      StringBuilder ask = new StringBuilder();
                     ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
@@ -457,9 +452,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 JSONObject jsonObject = new JSONObject(response);
                                 int status = jsonObject.getInt("status");
                                 if(status==200){
-                                    good.setBackgroundResource(R.drawable.good);
-                                    is_good=false;
-                                    good_num.setText(String.valueOf((naive[i])));
+                                    Log.d("点赞", "cancel_good: succeed!");
+                                }else{
+                                    Log.d("点赞", "cancel_good: failed!");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -474,13 +469,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
          */
         adapter.setOnItemBadClickListener(new mRecyclerViewAdapter.onItemBadListener() {
             @Override
-            public void onBadClick(final int i) {
+            public void onBadClick(int i) {
                 View view = recyclerView.getChildAt(i);
-                final ImageButton bad = view.findViewById(R.id.main_bad);
-                final TextView bad_num = view.findViewById(R.id.main_bad_number);
+                ImageButton bad = view.findViewById(R.id.main_bad);
+                TextView bad_num = view.findViewById(R.id.main_bad_number);
+                bad.setBackgroundResource(R.drawable.bad_blue);
+                bad_num.setText(String.valueOf((naive[i]+1)));
                 if(is_bad==false){
-                    final String url = "http://bihu.jay86.com/naive.php";
-                    final StringBuilder ask = new StringBuilder();
+                    is_bad=true;
+                    String url = "http://bihu.jay86.com/naive.php";
+                    StringBuilder ask = new StringBuilder();
                     ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
                     NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
                         @Override
@@ -489,9 +487,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 JSONObject jsonObject = new JSONObject(response);
                                 int status = jsonObject.getInt("status");
                                 if(status == 200){
-                                    bad.setBackgroundResource(R.drawable.bad_blue);
-                                    is_bad=true;
-                                    bad_num.setText(String.valueOf((naive[i]+1)));
+                                    if(status==200){
+                                        Log.d("点赞", "bad: succeed!");
+                                    }else{
+                                        Log.d("点赞", "bad: failed!");
+                                    }
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -499,6 +499,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
                     });
                 }else{
+                    is_bad=false;
+                    bad.setBackgroundResource(R.drawable.bad);
+                    bad_num.setText(String.valueOf((naive[i])));
                     String url = "http://bihu.jay86.com/cancelNaive.php";
                     StringBuilder ask = new StringBuilder();
                     ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
@@ -509,9 +512,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 JSONObject jsonObject = new JSONObject(response);
                                 int status = jsonObject.getInt("status");
                                 if(status==200){
-                                    bad.setBackgroundResource(R.drawable.bad);
-                                    is_bad=false;
-                                    bad_num.setText(String.valueOf((naive[i])));
+                                    Log.d("点赞", "cancel_bad: succeed!");
+                                }else{
+                                    Log.d("点赞", "cancel_bad: failed!");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -527,10 +530,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
          */
         adapter.setOnItemLikeClickListener(new mRecyclerViewAdapter.onItemLikeListener() {
             @Override
-            public void onLikeClick(final int i) {
+            public void onLikeClick(int i) {
                 View view = recyclerView.getChildAt(i);
-                final ImageButton like = view.findViewById(R.id.main_like);
+                ImageButton like = view.findViewById(R.id.main_like);
+                like.setBackgroundResource(R.drawable.like_blue);
                 if(is_like==false){
+                    is_like=true;
                     String url = "http://bihu.jay86.com/favorite.php";
                     StringBuilder ask = new StringBuilder();
                     ask.append("qid="+questionId[i]+"&token="+user.getToken());
@@ -541,8 +546,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 JSONObject jsonObject = new JSONObject(response);
                                 int status = jsonObject.getInt("status");
                                 if(status==200){
-                                    like.setBackgroundResource(R.drawable.like_blue);
-                                    is_like=true;
+                                    Log.d("点赞", "like: succeed!");
+                                }else{
+                                    Log.d("点赞", "like: failed!");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -551,6 +557,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     });
 
                 }else{
+                    is_like=false;
+                    like.setBackgroundResource(R.drawable.like);
                     String url = "http://bihu.jay86.com/cancelFavorite.php";
                     StringBuilder ask = new StringBuilder();
                     ask.append("qid="+questionId[i]+"&token="+user.getToken());
@@ -561,8 +569,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 JSONObject jsonObject = new JSONObject(response);
                                 int status = jsonObject.getInt("status");
                                 if(status==200){
-                                    like.setBackgroundResource(R.drawable.like);
-                                    is_like=false;
+                                    Log.d("点赞", "cancel_like: succeed!");
+                                }else{
+                                    Log.d("点赞", "cancel_like: failed!");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

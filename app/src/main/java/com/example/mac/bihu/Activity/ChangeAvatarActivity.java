@@ -3,6 +3,7 @@ package com.example.mac.bihu.Activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,27 +12,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.mac.bihu.R;
+import com.qiniu.android.storage.UploadManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.function.BiFunction;
 
 public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnClickListener {
     public static final int TAKE_PHOTO = 1;
@@ -39,12 +38,29 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
     private ImageView showImage;
     private Uri imageUri;
 
+    private ImageView imageView;
+    private ProgressDialog progressDialog;
+    private boolean isProgressCancel;
+    private UploadManager uploadManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_avatar);
         initView();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void initView(){
         findViewById(R.id.change_camera).setOnClickListener(this);

@@ -44,8 +44,6 @@ public class FavoriteActivity extends AppCompatActivity {
     private boolean[] is_exciting;
     private boolean[] is_naive;
 
-    private Handler handler = new Handler();
-
     private LinearLayoutManager layoutManager;
     private mFavoriteAdapter adapter;
 
@@ -56,7 +54,7 @@ public class FavoriteActivity extends AppCompatActivity {
         initThread();
         init();
         initToolbar();
-        initButtonClick();
+
 
     }
     public void initThread(){
@@ -85,7 +83,6 @@ public class FavoriteActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Log.d("fxy",""+response);
                             JSONObject jsonObject1 = new JSONObject(response);
                             String data = jsonObject1.getString("data");
                             JSONObject jsonObject2 = new JSONObject(data);
@@ -98,21 +95,27 @@ public class FavoriteActivity extends AppCompatActivity {
                                 datelist.add(object.getString("date"));
                                 exciting[i] = object.getInt("exciting");
                                 naive[i] = object.getInt("naive");
+                                authorAvatarlist.add(object.getString("authorAvatar"));
                                 recentlist.add(object.getString("recent"));
                                 answerCountlist[i] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
                                 is_exciting[i] = object.getBoolean("is_exciting");
                                 is_naive[i] = object.getBoolean("is_naive");
                             }
-
+                            adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
+                                    answerCountlist, authorNamelist, authorAvatarlist, titlelist,
+                                    contentlist, exciting, naive, recentlist, is_exciting, is_naive);
+                            recyclerView=findViewById(R.id.favorite_recyclerview);
+                            layoutManager = new LinearLayoutManager(FavoriteActivity.this);
+                            recyclerView.setLayoutManager(layoutManager);
+                            recyclerView.setAdapter(adapter);
+                            initButtonClick();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 });
-                adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
-                        answerCountlist, authorNamelist, authorAvatarlist, titlelist,
-                        contentlist, exciting, naive, recentlist, is_exciting, is_naive);
+
 
             }
         }).start();
@@ -123,11 +126,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
     }
     public void init(){
-        recyclerView=findViewById(R.id.favorite_recyclerview);
-        layoutManager = new LinearLayoutManager(this);
-        Log.d("fxy",""+titlelist.size());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
         setTitle("我的收藏");
         setSupportActionBar(toolbar);
     }

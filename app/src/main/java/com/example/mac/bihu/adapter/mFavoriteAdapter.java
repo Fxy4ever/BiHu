@@ -2,7 +2,6 @@ package com.example.mac.bihu.adapter;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +13,6 @@ import android.widget.TextView;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,8 +33,8 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private boolean[] is_exciting;
     private boolean[] is_naive;
 
-    private int FOOTER = -1;
-    private int NORMAL = 0;
+    private int FOOTER = 1;
+    private int NORMAL = 2;
 
     public mFavoriteAdapter(List<Bitmap> imageslist, List<String> datelist, List<String> recentlist,
                                 int[] answerCountlist, List<String> authorNamelist, List<String> authorAvatarlist,
@@ -63,11 +57,12 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        Log.d("fxy", "size="+titlelist.size()   );
-        if(position == titlelist.size())
+        if(position == titlelist.size()){
             return FOOTER;
-        else
+        }
+        else{
             return NORMAL;
+        }
     }
 
 
@@ -78,7 +73,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             FooterViewHolder holder = new FooterViewHolder(view);
             return holder;
         }else{
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.favorite_item, parent, false);
             NormalViewHolder holder = new NormalViewHolder(view);
             return holder;
         }

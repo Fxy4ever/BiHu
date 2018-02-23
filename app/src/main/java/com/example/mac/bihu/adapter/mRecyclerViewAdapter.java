@@ -1,6 +1,5 @@
 package com.example.mac.bihu.adapter;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,17 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.mac.bihu.Activity.MainActivity;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -46,7 +38,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean[] is_naive;
     private boolean[] is_favorite;
 
-    private int FOOTER = -1;
+    private int FOOTER = 3;
     private int HEADER = 1;
     private int NORMAL = 0;
     private int END = 2;
@@ -72,7 +64,8 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        if(position == titlelist.size()&&position!=0)
+        Log.d(TAG, "list.size= "+titlelist.size());
+        if(position == authorNamelist.size())
             return FOOTER;
         else if (position==0)
             return HEADER;
@@ -83,6 +76,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG, "viewtype="+viewType);
         if(viewType == END) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerveiw_end_item,parent,false);
             EndViewHolder holder = new EndViewHolder(view);
@@ -159,6 +153,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        Log.d(TAG, "presentPosition="+position);
        if(holder instanceof NormalViewHolder){
           /**
            * 绑定数据

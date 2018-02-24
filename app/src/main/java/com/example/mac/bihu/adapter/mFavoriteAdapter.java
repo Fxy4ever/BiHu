@@ -13,7 +13,13 @@ import android.widget.TextView;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
+
+import static com.example.mac.bihu.Activity.MainActivity.questionId;
 
 /**
  * Created by mac on 2018/2/4.
@@ -32,6 +38,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<String> recentlist;
     private boolean[] is_exciting;
     private boolean[] is_naive;
+    private String token;
 
     private int FOOTER = 1;
     private int NORMAL = 2;
@@ -39,7 +46,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public mFavoriteAdapter(List<Bitmap> imageslist, List<String> datelist, List<String> recentlist,
                                 int[] answerCountlist, List<String> authorNamelist, List<String> authorAvatarlist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive, List<String> recentlist1,
-                                boolean[] is_exciting, boolean[] is_naive) {
+                                boolean[] is_exciting, boolean[] is_naive,String token) {
         this.imageslist = imageslist;
         this.datelist = datelist;
         this.recentlist = recentlist;
@@ -53,6 +60,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.recentlist = recentlist1;
         this.is_exciting = is_exciting;
         this.is_naive = is_naive;
+        this.token = token;
     }
 
     @Override
@@ -135,6 +143,9 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        if(position==getItemCount()-1){
+            loadmore();
+        }
         if(holder instanceof NormalViewHolder){
             /**
              * 绑定数据
@@ -213,6 +224,44 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 });
             }
         }
+    }
+    public void loadmore(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "http://bihu.jay86.com/getQuestionList.php";
+                StringBuilder getItem = new StringBuilder();
+                getItem.append("page=1" + "&token=" + token);
+                NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject1 = new JSONObject(response);
+                            String data = jsonObject1.getString("data");
+                            JSONObject jsonObject2 = new JSONObject(data);
+                            String questions = jsonObject2.getString("questions");
+                            JSONArray jsonArray = new JSONArray(questions);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                final JSONObject object = jsonArray.getJSONObject(i);
+                                titlelist.add(object.getString("title"));
+                                contentlist.add(object.getString("content"));
+                                datelist.add(object.getString("date"));
+                                exciting[i] = object.getInt("exciting");
+                                naive[i] = object.getInt("naive");
+                                recentlist.add(object.getString("recent"));
+                                answerCountlist[i] = object.getInt("answerCount");
+                                authorNamelist.add(object.getString("authorName"));
+                                is_exciting[i] = object.getBoolean("is_exciting");
+                                is_naive[i] = object.getBoolean("is_naive");
+                                questionId[i] = object.getInt("id");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override

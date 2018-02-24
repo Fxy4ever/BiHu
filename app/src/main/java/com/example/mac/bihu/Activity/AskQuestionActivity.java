@@ -16,6 +16,9 @@ import com.example.mac.bihu.mUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class AskQuestionActivity extends AppCompatActivity {
     private mUser user;
     private Handler handler = new Handler();
@@ -37,8 +40,15 @@ public class AskQuestionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 EditText title_edit = findViewById(R.id.ask_title);
                 EditText content_edit = findViewById(R.id.ask_content);
-                final String title = title_edit.getText().toString();
-                final String content = content_edit.getText().toString();
+                String title = null;
+                String content = null;
+                try {
+                    title = URLEncoder.encode(title_edit.getText().toString(),"UTF-8");
+                    content =  URLEncoder.encode(content_edit.getText().toString(),"UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
                 if(title.length()>0&&content.length()>0){
                             user = (mUser)getApplication();
                             String token = user.getToken();

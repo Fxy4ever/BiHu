@@ -26,9 +26,22 @@
         android:textColor="#000000"
         android:background="#60000000"
         android:text="从相册上传"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp"/>
+    <Button
+        android:id="@+id/change_ask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#60000000"
+        android:textColor="#000000"
+        android:text="确认选择此头像"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="19dp" />
+
     <Button
         android:id="@+id/change_back"
         android:layout_width="match_parent"
@@ -39,6 +52,12 @@
     <ImageView
         android:id="@+id/see_pic"
         android:layout_width="match_parent"
-        android:layout_height="400dp" />
+        android:layout_height="200dp" />
+    <TextView
+        android:textSize="30sp"
+        android:id="@+id/see_infor"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

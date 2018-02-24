@@ -16,6 +16,9 @@ import com.example.mac.bihu.mUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class AnswerActivity extends AppCompatActivity {
     private EditText editText;
     mUser user;
@@ -37,7 +40,12 @@ public class AnswerActivity extends AppCompatActivity {
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String content = editText.getText().toString();
+                String content = null;
+                try {
+                    content = URLEncoder.encode(editText.getText().toString(),"UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 user = (mUser) getApplication();
                 String token = user.getToken();
                 String url = "http://bihu.jay86.com/answer.php";

@@ -2,18 +2,16 @@ package com.example.mac.bihu.adapter;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mac.bihu.R;
+import com.example.mac.bihu.Utils.NetUtils;
 
 import java.util.List;
 
@@ -24,7 +22,7 @@ import java.util.List;
 public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private List<String> datelist;
     private List<String> authorNamelist;
-    private List<Bitmap> authorAvatarlist;
+    private List<String> authorAvatarlist;
     private List<String> contentlist;
     private int[]         exciting;
     private int[]         naive;
@@ -32,9 +30,10 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     private boolean[] is_naive;
 
 
-    public MyInsideRecyclerAdapter(List<String> datelist, List<String> authorNamelist,List<String> contentlist, int[] exciting, int[] naive, boolean[] is_exciting, boolean[] is_naive) {
+    public MyInsideRecyclerAdapter(List<String> datelist, List<String> authorNamelist,List<String> authorAvatarlist,List<String> contentlist, int[] exciting, int[] naive, boolean[] is_exciting, boolean[] is_naive) {
         this.datelist = datelist;
         this.authorNamelist = authorNamelist;
+        this.authorAvatarlist = authorAvatarlist;
         this.contentlist = contentlist;
         this.exciting = exciting;
         this.naive = naive;
@@ -51,6 +50,16 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
 
+    /**
+     * 实现这个item点击事件接口
+     */
+    public interface OnItemClickListener {
+        void OnClickItem(View view, int position);
+    }
+    private OnItemClickListener MyonItemClickListener;
+    public void onItemClickListner(OnItemClickListener onItemClickListener){
+        MyonItemClickListener = onItemClickListener;
+    }
     /**
      * good点击接口
      */
@@ -75,13 +84,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     /**
      * 采纳点击接口
      */
-    public interface onItemLikeListener {
-        void onLikeClick(int i);
-    }
-    private onItemLikeListener MyonItemLikeListener;
-    public void setOnItemLikeClickListener(onItemLikeListener mOnItemLikeListener) {
-        this.MyonItemLikeListener = mOnItemLikeListener;
-    }
+
 
 
     @Override
@@ -91,13 +94,26 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             /**
              * 绑定数据
              */
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                        @Override
+                        public void mBitmap(Bitmap mBitmap) {
+                            if(mBitmap==null){
+
+                            }else{
+                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                            }
+                        }
+                    });
+                }
+            }).start();
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));
             ((NormalViewHolder) holder).date.setText(datelist.get(position));
             ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[position]));
             ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
-            ((NormalViewHolder) holder).avatar.setImageBitmap(authorAvatarlist.get(position));
-
 
             //good绑定
             ((NormalViewHolder) holder).good.setOnClickListener(new View.OnClickListener() {
@@ -113,17 +129,22 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     MyonItemBadListener.onBadClick(position);
                 }
             });
-            //like绑定
-            ((NormalViewHolder) holder).like.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    MyonItemLikeListener.onLikeClick(position);
-                }
-            });
-
+            //item绑定
+            View view = ((LinearLayout)holder.itemView).getChildAt(0);
+            if(MyonItemClickListener != null){
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int position = holder.getLayoutPosition();
+                        MyonItemClickListener.OnClickItem(view,position);
+                    }
+                });
+            }
 
         }
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -143,7 +164,6 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         //        ImageView images;
         Button good;
         Button bad;
-        Button like;
 
         public NormalViewHolder(View itemView) {
             super(itemView);
@@ -156,7 +176,6 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             good = itemView.findViewById(R.id.ins_recy_good);
             bad = itemView.findViewById(R.id.ins_recy_bad);
-            like = itemView.findViewById(R.id.favorite_like);
         }
     }
 

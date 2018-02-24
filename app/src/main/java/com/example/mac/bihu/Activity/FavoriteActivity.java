@@ -2,13 +2,11 @@ package com.example.mac.bihu.Activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -104,7 +102,7 @@ public class FavoriteActivity extends AppCompatActivity {
                             }
                             adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
                                     answerCountlist, authorNamelist, authorAvatarlist, titlelist,
-                                    contentlist, exciting, naive, recentlist, is_exciting, is_naive);
+                                    contentlist, exciting, naive, recentlist, is_exciting, is_naive,user.getToken());
                             recyclerView=findViewById(R.id.favorite_recyclerview);
                             layoutManager = new LinearLayoutManager(FavoriteActivity.this);
                             recyclerView.setLayoutManager(layoutManager);

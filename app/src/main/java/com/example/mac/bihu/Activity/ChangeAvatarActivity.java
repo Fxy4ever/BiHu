@@ -1,9 +1,7 @@
-
 package com.example.mac.bihu.Activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,54 +18,216 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mac.bihu.R;
+import com.example.mac.bihu.Utils.NetUtils;
+import com.example.mac.bihu.mUser;
+import com.qiniu.android.common.Zone;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.Configuration;
+import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+
 public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnClickListener {
+    private com.example.mac.bihu.mUser user;
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
     private ImageView showImage;
     private Uri imageUri;
+    private String image_Path;
 
-    private ImageView imageView;
-    private ProgressDialog progressDialog;
-    private boolean isProgressCancel;
-    private UploadManager uploadManager;
+    private TextView title;//显示上传进度
+
+    private UploadManager uploadManager;//七牛SDK管理者
+
+    private final static String TOKEN_URL = "http://zzzia.net/qiniu/";//请求返回token
+    private static String uptoken;//服务器请求的token
+    private String accessKey="KBmqZoICK5wTbYCPLI934g_zv0Zitfbf3-6zRwT7";
+    private String secretKey="R_JBA9UyV_zGohkjpyxnwfWaARsm1FkChvyVlMYr";
+    private String bucket = "fxymine4ever";
+    private String upKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_avatar);
+        clickPost();
         initView();
+        initData();
     }
 
+    private void getTokenFromService(){
+        StringBuilder ask = new StringBuilder();
+        ask.append("accessKey="+accessKey+"&secretKey="+secretKey+"&bucket="+bucket);
+        NetUtils.post(TOKEN_URL, ask.toString(), new NetUtils.Callback() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.d("fxy", "getTokenFromService: "+response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    uptoken = jsonObject.getString("token");
+                    Log.d("fxy", "getTokenFromService: "+uptoken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-
-
-
-
-
-
-
-
-
-
-
+    private void initData(){
+        Log.d("fxy", "initData: ");
+        getTokenFromService();
+        upKey = "image" + String.valueOf(Math.random());
+        Configuration config = new Configuration.Builder()
+                .zone(Zone.zone2)
+                .build();
+        uploadManager = new UploadManager(config);
+    }
 
     private void initView(){
+        Log.d("fxy", "initView: ");
         findViewById(R.id.change_camera).setOnClickListener(this);
         findViewById(R.id.change_picture).setOnClickListener(this);
         showImage = findViewById(R.id.see_pic);
+        title = findViewById(R.id.see_infor);
+        Button back = findViewById(R.id.change_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ChangeAvatarActivity.this,MainActivity.class);
+                startActivity(intent);
+                ChangeAvatarActivity.this.finish();
+            }
+        });
     }
 
+    public void clickPost(){
+        Log.d("fxy", "clickPost: ");
+        Button post = findViewById(R.id.change_ask);
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(TextUtils.isEmpty(uptoken)){
+                    Log.d("fxy", "clickPost: ");
+                    Toast.makeText(ChangeAvatarActivity.this,"正在获取token,请等待",Toast.LENGTH_SHORT).show();
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadManager.put(image_Path, upKey, uptoken, new UpCompletionHandler() {
+                            @Override
+                            public void complete(String key, ResponseInfo info, JSONObject response) {
+                                Log.d("qiniu", "path="+image_Path+"  upkey="+upKey+"  uptoken="+uptoken);
+                                if(info.isOK()){
+                                    Log.d("qiniu", "complete:succeed ");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            title.setText("上传成功");
+                                        }
+                                    });
+                                }else{
+                                    Log.d("qiniu" ,"complete:failed ");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            title.setText("上传失败");
+                                        }
+                                    });
+                                }
+                            }
+                        },null);
+                        ChangeAvatarFromFuwuqi();
+                    }
+                }).start();
+            }
+        });
+    }
+
+//    public void clickCommit(){//没写数据库好像不用下载。。。
+//        Button commit = findViewById(R.id.change_commit);
+//        commit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        String fileName = "p4lin3s6h.bkt.clouddn.com";
+//                        String downUrl = "http://" +fileName + "/" + upKey;
+//                        Log.d("fxy", "downUrl: "+downUrl);
+//                        SyncHttpClient client = new SyncHttpClient();
+//                        client.get(downUrl, new BinaryHttpResponseHandler() {
+//                            @Override
+//                            public void onSuccess(int statusCode, Header[] headers, final byte[] binaryData) {
+//                                if(binaryData != null){
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            showImage.setImageBitmap(BitmapFactory.decodeByteArray(binaryData,0,binaryData.length));
+//                                            title.setText("成功更换头像!");
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                            @Override
+//                            public void onFailure(int statusCode, Header[] headers, byte[] binaryData, Throwable error) {
+//                                runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        title.setText("更换头像失败!");
+//                                    }
+//                                });
+//                            }
+//                        });
+//                    }
+//                }).start();
+//            }
+//        });
+//    }
+
+    private void ChangeAvatarFromFuwuqi(){
+        user = (mUser) getApplication();
+        String token = user.getToken();
+        StringBuilder ask = new StringBuilder();
+        String fileName = "p4lin3s6h.bkt.clouddn.com";
+        String downUrl = "http://" +fileName + "/" + upKey;
+        ask.append("token="+token+"&avatar="+downUrl);
+        String url = "http://bihu.jay86.com/modifyAvatar.php";
+        NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    int status = jsonObject.getInt("status");
+                    if(status==200){
+                        Toast.makeText(ChangeAvatarActivity.this,"更换成功 请重新登陆",Toast.LENGTH_SHORT).show();
+                        Intent intent1 = new Intent(ChangeAvatarActivity.this,LoginActivity.class);
+                        startActivity(intent1);
+                        ChangeAvatarActivity.this.finish();
+                    }else{
+                        Toast.makeText(ChangeAvatarActivity.this,"头像更换失败 错误："+status,Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -76,6 +236,8 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                 break;
             case R.id.change_picture:
                 getPicFromPhoto();
+                break;
+            default:
                 break;
         }
     }
@@ -89,6 +251,8 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
         }
         try {
             outputImage.createNewFile();
+            image_Path = String.valueOf(ChangeAvatarActivity.this.getCacheDir()) + "/outputimg.jpg";
+            Log.d("fxy", "CameraPath=" + image_Path);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,7 +260,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
          * 内容提供者要注册
          */
         if(Build.VERSION.SDK_INT>=24){
-        //7.0直接使用本地真实uri是不安全的 FileProvider是一种特殊内容提供器
+            //7.0直接使用本地真实uri是不安全的 FileProvider是一种特殊内容提供器
             // 可以选择性地将封装过后的uri提供给外部 提高安全性
             //第二个为任意唯一字符 第三个为刚刚的file
             imageUri = FileProvider.getUriForFile(this,"com.example.mac.bihu,fileprovider",outputImage);
@@ -109,7 +273,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                     !=PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(ChangeAvatarActivity.this,new String[]{Manifest.permission.CAMERA},TAKE_PHOTO);
             }else{
-               openCamera();
+                openCamera();
             }
         }else{
             openCamera();
@@ -142,29 +306,29 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       if(resultCode == RESULT_OK){
-           switch (requestCode){
-               case TAKE_PHOTO:
-                   Log.d("fxy", "Take photo");
-                   try {
-                       Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                       showImage.setImageBitmap(bitmap);
-                   } catch (FileNotFoundException e) {
-                       e.printStackTrace();
-                   }
-                   break;
-               case CHOOSE_PHOTO:
-                   Log.d("fxy", "choose photo ");
-                   if(Build.VERSION.SDK_INT>=19){
-                       handleImageOnKitKat(data);
-                   }else{
-                       handleImagebeforKitKat(data);
-                   }
-                   break;
-               default:
-                   break;
-           }
-       }
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case TAKE_PHOTO:
+                    Log.d("fxy", "Take photo");
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+//                        showImage.setImageBitmap(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case CHOOSE_PHOTO:
+                    Log.d("fxy", "choose photo ");
+                    if(Build.VERSION.SDK_INT>=19){
+                        handleImageOnKitKat(data);
+                    }else{
+                        handleImagebeforKitKat(data);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -191,6 +355,8 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
 //            如果是file类型，直接获取图片路径
             imagePath = uri.getPath();
         }
+        image_Path = imagePath;
+        Log.d("fxy", "imagePath: "+image_Path);
         displayImage(imagePath);
     }
 

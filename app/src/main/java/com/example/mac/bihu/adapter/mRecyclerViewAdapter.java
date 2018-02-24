@@ -15,9 +15,14 @@ import android.widget.TextView;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static com.example.mac.bihu.Activity.MainActivity.questionId;
 
 /**
  * Created by mac on 2018/2/4.
@@ -37,17 +42,17 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean[] is_exciting;
     private boolean[] is_naive;
     private boolean[] is_favorite;
+    private String token;
 
     private int FOOTER = 3;
     private int HEADER = 1;
     private int NORMAL = 0;
     private int END = 2;
 
-
     public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
                                 List<String> recentlist, boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite
-    ,List<String> authorAvatarlist ) {
+    ,List<String> authorAvatarlist ,String token) {
         this.datelist = datelist;
         this.answerCountlist = answerCountlist;
         this.authorNamelist = authorNamelist;
@@ -60,6 +65,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.is_naive = is_naive;
         this.is_favorite = is_favorite;
         this.authorAvatarlist = authorAvatarlist;
+        this.token = token;
     }
 
     @Override
@@ -77,11 +83,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "viewtype="+viewType);
-        if(viewType == END) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerveiw_end_item,parent,false);
-            EndViewHolder holder = new EndViewHolder(view);
-            return holder;
-        }else if(viewType == FOOTER){
+        if(viewType == FOOTER){
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerveiw_foot_item,parent,false);
             FooterViewHolder holder = new FooterViewHolder(view);
             return holder;
@@ -154,6 +156,11 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         Log.d(TAG, "presentPosition="+position);
+
+        if(position==getItemCount()-1){
+            loadmore();
+        }
+
        if(holder instanceof NormalViewHolder){
           /**
            * 绑定数据
@@ -161,12 +168,12 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(TAG, "onBindeViewHolder:" +position+ authorAvatarlist );
+                    Log.d(TAG, "onBindeViewHolder:" +position+ authorAvatarlist.get(position) );
                     NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
                             if(authorAvatarlist.get(position)==null){
-                                System.out.println("123");
+
                             }else{
                                 ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
                             }
@@ -174,12 +181,13 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                     });
                 }
             }).start();
+
             ((NormalViewHolder) holder).title.setText(titlelist.get(position));
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));
             ((NormalViewHolder) holder).date.setText(datelist.get(position));
             ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[position]));
             ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[position]));
-            ((NormalViewHolder) holder).recent.setText(recentlist.get(position));
+            ((NormalViewHolder) holder).recent.setText(recentlist.get(position)+"更新");
             ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
             if(is_exciting[position]){
@@ -241,6 +249,46 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
       }
     }
 
+    public void loadmore(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "http://bihu.jay86.com/getQuestionList.php";
+                StringBuilder getItem = new StringBuilder();
+                getItem.append("page=1" + "&token=" + token);
+                NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject1 = new JSONObject(response);
+                            String data = jsonObject1.getString("data");
+                            JSONObject jsonObject2 = new JSONObject(data);
+                            String questions = jsonObject2.getString("questions");
+                            JSONArray jsonArray = new JSONArray(questions);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                final JSONObject object = jsonArray.getJSONObject(i);
+                                titlelist.add(object.getString("title"));
+                                contentlist.add(object.getString("content"));
+                                datelist.add(object.getString("date"));
+                                exciting[i] = object.getInt("exciting");
+                                naive[i] = object.getInt("naive");
+                                recentlist.add(object.getString("recent"));
+                                answerCountlist[i] = object.getInt("answerCount");
+                                authorNamelist.add(object.getString("authorName"));
+                                is_exciting[i] = object.getBoolean("is_exciting");
+                                is_naive[i] = object.getBoolean("is_naive");
+                                is_favorite[i] = object.getBoolean("is_favorite");
+                                questionId[i] = object.getInt("id");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
     @Override
     public int getItemCount() {
         return authorNamelist.size()+1;
@@ -294,13 +342,35 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
         }
     }
-    public class EndViewHolder extends RecyclerView.ViewHolder{
 
-        public EndViewHolder(View itemView) {
-            super(itemView);
+    public void refreshData(List<String> datelist1, int[] answerCountlist1, List<String> authorNamelist1,
+                            List<String> titlelist1, List<String> contentlist1, int[] exciting1, int[] naive1,
+                            List<String> recentlist1, boolean[] is_exciting1, boolean[] is_naive1, boolean[] is_favorite1
+            , final List<String> authorAvatarlist1, int[] questionId1) {
+        Log.d("fxy", "Refresh");
+        titlelist.clear();
+        contentlist.clear();
+        datelist.clear();
+        recentlist.clear();
+        authorNamelist.clear();
+        authorAvatarlist.clear();
+
+        titlelist.addAll(titlelist1);
+        contentlist.addAll(contentlist1);
+        datelist.addAll(datelist1);
+        recentlist.addAll(recentlist1);
+        authorNamelist.addAll(recentlist1);
+        authorAvatarlist.addAll(authorAvatarlist1);
+
+        for (int i = 0; i < titlelist1.size(); i++) {
+            exciting[i] = exciting1[i];
+            naive[i] = naive1[i];
+            answerCountlist[i] = answerCountlist1[i];
+            is_exciting[i] = is_exciting1[i];
+            is_naive[i] = is_naive1[i];
+            is_favorite[i] = is_favorite1[i];
+            questionId[i] = questionId1[i];
         }
     }
-
-
 
 }

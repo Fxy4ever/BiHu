@@ -1,8 +1,8 @@
 package com.example.mac.bihu.Activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +28,7 @@ public class itemTouchActivity extends AppCompatActivity {
     private LinearLayoutManager manager;
 
     private List<String> datelist;
+    private List<String> authorAvatarlist;
     private List<String> authorNamelist;
     private List<String> contentlist;
     private int[]         exciting;
@@ -44,11 +45,10 @@ public class itemTouchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_touch);
         initData();
         initThread();
-        initRecyclerview();
-        initItemButton();
     }
     public void initData(){
         datelist = new ArrayList<>();
+        authorAvatarlist = new ArrayList<>();
         authorNamelist = new ArrayList<>();
         contentlist = new ArrayList<>();
         exciting = new int[40];
@@ -60,6 +60,9 @@ public class itemTouchActivity extends AppCompatActivity {
         user = (mUser) getApplication();
     }
     public void initThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 String url = "http://bihu.jay86.com/getAnswerList.php";
                 StringBuilder request = new StringBuilder();
                 request.append("page="+"0"+"&qid="+qid+"&token="+user.getToken());
@@ -67,6 +70,7 @@ public class itemTouchActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response)  {
                         try {
+                            Log.d("fxy", "onResponse: "+response);
                             Log.d("fxy", "onResponse: "+response);
                             JSONObject jsonObject = new JSONObject(response);
                             String data = jsonObject.getString("data");
@@ -79,21 +83,24 @@ public class itemTouchActivity extends AppCompatActivity {
                                 authorNamelist.add(object.getString("authorName"));
                                 contentlist.add(object.getString("content"));
                                 exciting[i] = object.getInt("exciting");
+                                authorAvatarlist.add(object.getString("authorAvatar"));
                                 naive[i] = object.getInt("naive");
                                 is_exciting[i] = object.getBoolean("is_exciting");
                                 is_naive[i] = object.getBoolean("is_naive");
                             }
+                            initRecyclerview();
+                            initItemButton();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 });
-
+            }
+        }).start();
     }
     public void initRecyclerview(){
         recyclerView = findViewById(R.id.inside_recyclerview);
-        adapter = new MyInsideRecyclerAdapter(datelist,authorNamelist,contentlist,exciting,naive,
+        adapter = new MyInsideRecyclerAdapter(datelist,authorNamelist,authorAvatarlist,contentlist,exciting,naive,
                 is_exciting,is_naive);
         manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
@@ -123,16 +130,10 @@ public class itemTouchActivity extends AppCompatActivity {
                 Toast.makeText(itemTouchActivity.this,"第"+i+"个bad",Toast.LENGTH_SHORT).show();
             }
         });
-        adapter.setOnItemLikeClickListener(new MyInsideRecyclerAdapter.onItemLikeListener() {
+        adapter.onItemClickListner(new MyInsideRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onLikeClick(int i) {
-                Toast.makeText(itemTouchActivity.this,"第"+i+"个like",Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.setOnItemLikeClickListener(new MyInsideRecyclerAdapter.onItemLikeListener() {
-            @Override
-            public void onLikeClick(int i) {
-                Toast.makeText(itemTouchActivity.this,"第"+i+"个item",Toast.LENGTH_SHORT).show();
+            public void OnClickItem(View view, int position) {
+                Toast.makeText(itemTouchActivity.this,"第"+position+"个item",Toast.LENGTH_SHORT).show();
             }
         });
     }

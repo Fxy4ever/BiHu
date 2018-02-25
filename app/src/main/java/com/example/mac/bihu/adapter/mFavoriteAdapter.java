@@ -125,7 +125,9 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
-                            if(mBitmap!=null){
+                            if(mBitmap==null){
+                                ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
+                            }else{
                                 ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
                             }
                         }

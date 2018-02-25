@@ -131,8 +131,8 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                     NetUtils.getBitmap(authorAvatarlist.get(Normal_position), new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
-                            if(authorAvatarlist.get(Normal_position)==null){
-
+                            if(mBitmap==null){
+                                ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
                             }else{
                                 ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
                             }

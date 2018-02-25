@@ -75,7 +75,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
                             if(mBitmap==null){
-
+                                ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
                             }else{
                                 ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
                             }

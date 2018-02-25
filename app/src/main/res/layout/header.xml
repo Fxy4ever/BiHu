@@ -15,7 +15,6 @@
         >
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/navigation_header_avatar"
-            android:src="@drawable/avatar"
             android:layout_marginTop="70dp"
             android:layout_width="75dp"
             android:layout_height="75dp"

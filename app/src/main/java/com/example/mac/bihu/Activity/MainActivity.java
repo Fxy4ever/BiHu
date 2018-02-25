@@ -111,7 +111,16 @@ public class MainActivity extends AppCompatActivity {
         userAvatar = navigation_View.findViewById(R.id.navigation_header_avatar);
         String headerName = user.getUsername();
         usernameTv.setText(headerName);
-        if (user.getAvatar() != null) {
+        if (user.getAvatar().equals("null")) {
+            Log.d("test", "avatar1="+user.getAvatar());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    userAvatar.setImageResource(R.mipmap.ic_launcher_round);
+                }
+            });
+        } else {
+            Log.d("test", "avatar2="+user.getAvatar());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -124,14 +133,8 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }).start();
-        } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    userAvatar.setBackgroundResource(R.drawable.avatar);
-                }
-            });
         }
+
     }
 
 

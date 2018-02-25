@@ -44,12 +44,13 @@ import java.io.IOException;
 
 
 public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnClickListener {
-    private com.example.mac.bihu.mUser user;
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
     private ImageView showImage;
     private Uri imageUri;
     private String image_Path;
+
+    private mUser user = (mUser) getApplication();
 
     private TextView title;//显示上传进度
 
@@ -205,7 +206,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
         String token = user.getToken();
         StringBuilder ask = new StringBuilder();
         String fileName = "p4lin3s6h.bkt.clouddn.com";
-        String downUrl = "http://" +fileName + "/" + upKey;
+        final String downUrl = "http://" +fileName + "/" + upKey;
         ask.append("token="+token+"&avatar="+downUrl);
         String url = "http://bihu.jay86.com/modifyAvatar.php";
         NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
@@ -215,7 +216,8 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                     JSONObject jsonObject = new JSONObject(response);
                     int status = jsonObject.getInt("status");
                     if(status==200){
-                        Toast.makeText(ChangeAvatarActivity.this,"更换成功 请重新登陆",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChangeAvatarActivity.this,"更换成功",Toast.LENGTH_SHORT).show();
+//                        user.setAvatar(downUrl);
                         Intent intent1 = new Intent(ChangeAvatarActivity.this,LoginActivity.class);
                         startActivity(intent1);
                         ChangeAvatarActivity.this.finish();

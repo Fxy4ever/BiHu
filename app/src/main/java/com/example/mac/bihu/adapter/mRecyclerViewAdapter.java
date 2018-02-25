@@ -42,12 +42,12 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean[] is_exciting;
     private boolean[] is_naive;
     private boolean[] is_favorite;
-    private String token;
+    public static String token;
 
     private int FOOTER = 3;
     private int HEADER = 1;
     private int NORMAL = 0;
-    private int END = 2;
+
 
     public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
@@ -70,8 +70,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(TAG, "list.size= "+titlelist.size());
-        if(position == authorNamelist.size())
+        if(position == getItemCount()-1)
             return FOOTER;
         else if (position==0)
             return HEADER;
@@ -82,7 +81,6 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "viewtype="+viewType);
         if(viewType == FOOTER){
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerveiw_foot_item,parent,false);
             FooterViewHolder holder = new FooterViewHolder(view);
@@ -119,60 +117,21 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setOnItemCommentsClickListener(onItemCommentsListener mOnItemCommentsListener) {
         this.MyonItemCommentsListener = mOnItemCommentsListener;
     }
-    /**
-     * good点击接口
-     */
-    public interface onItemGoodListener {
-        void onGoodClick(int i);
-    }
-    private onItemGoodListener MyonItemGoodListener;
-    public void setOnItemGoodClickListener(onItemGoodListener mOnItemGoodListener) {
-        this.MyonItemGoodListener = mOnItemGoodListener;
-    }
-
-    /**
-     * bad点击接口
-     */
-    public interface onItemBadListener {
-        void onBadClick(int i);
-    }
-    private onItemBadListener MyonItemBadListener;
-    public void setOnItemBadClickListener(onItemBadListener mOnItemBadListener) {
-        this.MyonItemBadListener = mOnItemBadListener;
-    }
-
-    /**
-     * like点击接口
-     */
-    public interface onItemLikeListener {
-        void onLikeClick(int i);
-    }
-    private onItemLikeListener MyonItemLikeListener;
-    public void setOnItemLikeClickListener(onItemLikeListener mOnItemLikeListener) {
-        this.MyonItemLikeListener = mOnItemLikeListener;
-    }
-
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        Log.d(TAG, "presentPosition="+position);
-
-        if(position==getItemCount()-1){
-            loadmore();
-        }
-
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
        if(holder instanceof NormalViewHolder){
-          /**
-           * 绑定数据
-           */
+            final int Normal_position = position-1;
+           /**
+            * 绑定数据
+            */
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(TAG, "onBindeViewHolder:" +position+ authorAvatarlist.get(position) );
-                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position), new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
-                            if(authorAvatarlist.get(position)==null){
+                            if(authorAvatarlist.get(Normal_position)==null){
 
                             }else{
                                 ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
@@ -182,57 +141,196 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             }).start();
 
-            ((NormalViewHolder) holder).title.setText(titlelist.get(position));
-            ((NormalViewHolder) holder).content.setText(contentlist.get(position));
-            ((NormalViewHolder) holder).date.setText(datelist.get(position));
-            ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[position]));
-            ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[position]));
-            ((NormalViewHolder) holder).recent.setText(recentlist.get(position)+"更新");
-            ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[position]));
-            ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
-            if(is_exciting[position]){
+            ((NormalViewHolder) holder).title.setText(titlelist.get(Normal_position));
+            ((NormalViewHolder) holder).content.setText(contentlist.get(Normal_position));
+            ((NormalViewHolder) holder).date.setText(datelist.get(Normal_position));
+            ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[Normal_position]));
+            ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[Normal_position]));
+            ((NormalViewHolder) holder).recent.setText(recentlist.get(Normal_position)+"更新");
+            ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[Normal_position]));
+            ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(Normal_position));
+            if(is_exciting[Normal_position]){
                 ((NormalViewHolder) holder).good.setBackgroundResource(R.drawable.good_blue);
             }
-            if(is_naive[position]){
+            if(is_naive[Normal_position]){
                 ((NormalViewHolder) holder).bad.setBackgroundResource(R.drawable.bad_blue);
             }
-            if(is_favorite[position]){
+            if(is_favorite[Normal_position]){
                 ((NormalViewHolder) holder).like.setBackgroundResource(R.drawable.like_blue);
             }
 
+           ((NormalViewHolder) holder).good.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   if(!is_exciting[Normal_position]){
+                       view.setBackgroundResource(R.drawable.good_blue);
+                       exciting[Normal_position]+=1;
+                       ((NormalViewHolder) holder).exciting.setText(String.valueOf((exciting[Normal_position])));
+                       is_exciting[Normal_position]=true;
+                       String url = "http://bihu.jay86.com/exciting.php";
+                       StringBuilder ask = new StringBuilder();
+                       ask.append("id="+questionId[Normal_position]+"&type=1"+"&token="+token);
+                       NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                           @Override
+                           public void onResponse(String response) {
+                               try {
+                                   JSONObject jsonObject = new JSONObject(response);
+                                   int status = jsonObject.getInt("status");
+                                   if(status == 200){
+                                       if(status==200){
+                                           Log.d("点赞", "good: succeed!");
+                                       }else{
+                                           Log.d("点赞", "good: failed!");
+                                       }
+                                   }
+                               } catch (JSONException e) {
+                                   e.printStackTrace();
+                               }
+                           }
+                       });
+                   }else{
+                       is_exciting[Normal_position]=false;
+                       view.setBackgroundResource(R.drawable.good);
+                       exciting[Normal_position]-=1;
+                       ((NormalViewHolder) holder).exciting.setText(String.valueOf((exciting[Normal_position])));
+                       String url = "http://bihu.jay86.com/cancelExciting.php";
+                       StringBuilder ask = new StringBuilder();
+                       ask.append("id="+questionId[Normal_position]+"&type=1"+"&token="+token);
+                       NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                           @Override
+                           public void onResponse(String response) {
+                               try {
+                                   JSONObject jsonObject = new JSONObject(response);
+                                   int status = jsonObject.getInt("status");
+                                   if(status==200){
+                                       Log.d("点赞", "cancel_good: succeed!");
+                                   }else{
+                                       Log.d("点赞", "cancel_good: failed!");
+                                   }
+                               } catch (JSONException e) {
+                                   e.printStackTrace();
+                               }
+                           }
+                       });
 
-
-
-          //comments绑定
-          ((NormalViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                    MyonItemCommentsListener.onCommentsClick(position);
-              }
-          });
-          //good绑定
-            ((NormalViewHolder) holder).good.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    MyonItemGoodListener.onGoodClick(position);
-                }
-            });
-            //bad绑定
+                   }
+               }
+           });
             ((NormalViewHolder) holder).bad.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MyonItemBadListener.onBadClick(position);
+                    if(!is_naive[Normal_position]){
+                        view.setBackgroundResource(R.drawable.bad_blue);
+                        naive[Normal_position]+=1;
+                        ((NormalViewHolder) holder).naive.setText(String.valueOf((naive[Normal_position])));
+                        is_naive[Normal_position]=true;
+                        String url = "http://bihu.jay86.com/naive.php";
+                        StringBuilder ask = new StringBuilder();
+                        ask.append("id="+questionId[Normal_position]+"&type=1"+"&token="+token);
+                        NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    int status = jsonObject.getInt("status");
+                                    if(status == 200){
+                                        if(status==200){
+                                            Log.d("点赞", "bad: succeed!");
+                                        }else{
+                                            Log.d("点赞", "bad: failed!");
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }else{
+                        is_naive[Normal_position]=false;
+                        view.setBackgroundResource(R.drawable.bad);
+                        naive[Normal_position]-=1;
+                        ((NormalViewHolder) holder).naive.setText(String.valueOf((naive[Normal_position])));
+                        String url = "http://bihu.jay86.com/cancelNaive.php";
+                        StringBuilder ask = new StringBuilder();
+                        ask.append("id="+questionId[Normal_position]+"&type=1"+"&token="+token);
+                        NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    int status = jsonObject.getInt("status");
+                                    if(status==200){
+                                        Log.d("点赞", "cancel_bad: succeed!");
+                                    }else{
+                                        Log.d("点赞", "cancel_bad: failed!");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                    }
                 }
             });
-            //like绑定
             ((NormalViewHolder) holder).like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MyonItemLikeListener.onLikeClick(position);
+                    if(!is_favorite[Normal_position]){
+                        is_favorite[Normal_position]=true;
+                        view.setBackgroundResource(R.drawable.like_blue);
+                        String url = "http://bihu.jay86.com/favorite.php";
+                        StringBuilder ask = new StringBuilder();
+                        ask.append("qid="+questionId[Normal_position]+"&token="+token);
+                        NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    int status = jsonObject.getInt("status");
+                                    if(status==200){
+                                        Log.d("点赞", "like: succeed!");
+                                    }else{
+                                        Log.d("点赞", "like: failed!");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                    }else{
+                        is_favorite[Normal_position]=false;
+                        view.setBackgroundResource(R.drawable.like);
+                        String url = "http://bihu.jay86.com/cancelFavorite.php";
+                        StringBuilder ask = new StringBuilder();
+                        ask.append("qid="+questionId[Normal_position]+"&token="+token);
+                        NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    int status = jsonObject.getInt("status");
+                                    if(status==200){
+                                        Log.d("点赞", "cancel_like: succeed!");
+                                    }else{
+                                        Log.d("点赞", "cancel_like: failed!");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
-
+           ((NormalViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   MyonItemCommentsListener.onCommentsClick(Normal_position);
+               }
+           });
           /**
            * 实现item点击绑定
            */
@@ -241,21 +339,29 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
               view.setOnClickListener(new View.OnClickListener() {
                   @Override
                   public void onClick(View view) {
-                      int position = holder.getLayoutPosition();
+                      int position = holder.getLayoutPosition()-1;
                       MyonItemClickListener.OnClickItem(view,position);
                   }
               });
           }
-      }
+      }else if(holder instanceof HeaderViewHolder){
+
+       }else{
+
+       }
+        if((getItemViewType(position)==FOOTER&&position!=41)){
+            loadmore();
+        }
     }
 
     public void loadmore(){
+        Log.d(TAG, "loadmore: ");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url = "http://bihu.jay86.com/getQuestionList.php";
                 StringBuilder getItem = new StringBuilder();
-                getItem.append("page=1" + "&token=" + token);
+                getItem.append("page=1" +"&count=20"+"&token=" + token);
                 NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
                     @Override
                     public void onResponse(String response) {
@@ -270,16 +376,18 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                                 titlelist.add(object.getString("title"));
                                 contentlist.add(object.getString("content"));
                                 datelist.add(object.getString("date"));
-                                exciting[i] = object.getInt("exciting");
-                                naive[i] = object.getInt("naive");
+                                exciting[i+20] = object.getInt("exciting");
+                                naive[i+20] = object.getInt("naive");
                                 recentlist.add(object.getString("recent"));
-                                answerCountlist[i] = object.getInt("answerCount");
+                                authorAvatarlist.add(object.getString("authorAvatar"));
+                                answerCountlist[i+20] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
-                                is_exciting[i] = object.getBoolean("is_exciting");
-                                is_naive[i] = object.getBoolean("is_naive");
-                                is_favorite[i] = object.getBoolean("is_favorite");
-                                questionId[i] = object.getInt("id");
+                                is_exciting[i+20] = object.getBoolean("is_exciting");
+                                is_naive[i+20] = object.getBoolean("is_naive");
+                                is_favorite[i+20] = object.getBoolean("is_favorite");
+                                questionId[i+20] = object.getInt("id");
                             }
+                            notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -291,7 +399,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return authorNamelist.size()+1;
+        return authorNamelist.size()+2;
     }
 
 
@@ -348,29 +456,19 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                             List<String> recentlist1, boolean[] is_exciting1, boolean[] is_naive1, boolean[] is_favorite1
             , final List<String> authorAvatarlist1, int[] questionId1) {
         Log.d("fxy", "Refresh");
-        titlelist.clear();
-        contentlist.clear();
-        datelist.clear();
-        recentlist.clear();
-        authorNamelist.clear();
-        authorAvatarlist.clear();
-
-        titlelist.addAll(titlelist1);
-        contentlist.addAll(contentlist1);
-        datelist.addAll(datelist1);
-        recentlist.addAll(recentlist1);
-        authorNamelist.addAll(recentlist1);
-        authorAvatarlist.addAll(authorAvatarlist1);
-
-        for (int i = 0; i < titlelist1.size(); i++) {
-            exciting[i] = exciting1[i];
-            naive[i] = naive1[i];
-            answerCountlist[i] = answerCountlist1[i];
-            is_exciting[i] = is_exciting1[i];
-            is_naive[i] = is_naive1[i];
-            is_favorite[i] = is_favorite1[i];
-            questionId[i] = questionId1[i];
-        }
+            titlelist = titlelist1;
+            contentlist = contentlist1;
+            datelist = datelist1;
+            recentlist = recentlist1;
+            authorNamelist = authorNamelist1;
+            authorAvatarlist = authorAvatarlist1;
+            exciting= exciting1;
+            naive = naive1;
+            answerCountlist= answerCountlist1;
+            is_exciting = is_exciting1;
+            is_naive = is_naive1;
+            is_favorite = is_favorite1;
+            questionId = questionId1;
     }
 
 }

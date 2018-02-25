@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,9 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isRefresh;
 
-    private boolean is_good = false;
-    private boolean is_bad = false;
-    private boolean is_like = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.little_item1:
                         Intent intent3 = new Intent(MainActivity.this, ChangeAvatarActivity.class);
                         startActivity(intent3);
+                        MainActivity.this.finish();
                         break;
                     /**
                      * 更改密码的dialog
@@ -218,8 +216,10 @@ public class MainActivity extends AppCompatActivity {
                                                     JSONObject obj = new JSONObject(response);
                                                     int status = obj.getInt("status");
                                                     if (status == 200) {
-                                                        Toast.makeText(MainActivity.this, "更改成功", Toast.LENGTH_SHORT).show();
-                                                        ChangePasswordDialog.hide();
+                                                        Toast.makeText(MainActivity.this, "更改成功 请重新登陆", Toast.LENGTH_SHORT).show();
+                                                        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                                                        startActivity(intent);
+                                                        MainActivity.this.finish();
                                                     } else {
                                                         Toast.makeText(MainActivity.this, status, Toast.LENGTH_SHORT).show();
                                                     }
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 String url = "http://bihu.jay86.com/getQuestionList.php";
                 StringBuilder getItem = new StringBuilder();
                 String token = user.getToken();
-                getItem.append("page=0" +"&count=30"+ "&token=" + token);
+                getItem.append("page=0" +"&count=20"+ "&token=" + token);
                 NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
                     @Override
                     public void onResponse(String response) {
@@ -285,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
                                 is_naive[i] = object.getBoolean("is_naive");
                                 is_favorite[i] = object.getBoolean("is_favorite");
                                 questionId[i] = object.getInt("id");
+                                Log.d("fxy", "qid: "+questionId[i]);
                             }
                             initRecyclerView();
                             initButtonClick();
@@ -355,194 +356,20 @@ public class MainActivity extends AppCompatActivity {
      * item里面的button点击
      */
     public void initButtonClick() {
-        adapter.setOnItemCommentsClickListener(new mRecyclerViewAdapter.onItemCommentsListener() {
-            @Override
-            public void onCommentsClick(int i) {
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this,AnswerActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("id",i);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-        /**
-         * good
-         */
-        adapter.setOnItemGoodClickListener(new mRecyclerViewAdapter.onItemGoodListener() {
-            @Override
-            public void onGoodClick(int i) {
-                View view = recyclerView.getChildAt(i);
-                 ImageButton good = view.findViewById(R.id.main_good);
-                 TextView good_num = view.findViewById(R.id.main_good_number);
-                good.setBackgroundResource(R.drawable.good_blue);
-                good_num.setText(String.valueOf((naive[i]+1)));
-                if(is_good==false){
-                    is_good = true;
-                    good.setBackgroundResource(R.drawable.good_blue);
-                    String url = "http://bihu.jay86.com/exciting.php";
-                    StringBuilder ask = new StringBuilder();
-                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
-                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                int status = jsonObject.getInt("status");
-                                if(status==200){
-                                    Log.d("点赞", "good: succeed!");
-                                }else{
-                                    Log.d("点赞", "good: failed!");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }else{
-                    is_good = false;
-                    good.setBackgroundResource(R.drawable.good);
-                    good_num.setText(String.valueOf((naive[i])));
 
-                     String url = "http://bihu.jay86.com/cancelExciting.php";
-                     StringBuilder ask = new StringBuilder();
-                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
-                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                int status = jsonObject.getInt("status");
-                                if(status==200){
-                                    Log.d("点赞", "cancel_good: succeed!");
-                                }else{
-                                    Log.d("点赞", "cancel_good: failed!");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            }
-        });
-        /**
-         * bad
-         */
-        adapter.setOnItemBadClickListener(new mRecyclerViewAdapter.onItemBadListener() {
-            @Override
-            public void onBadClick(int i) {
-                View view = recyclerView.getChildAt(i);
-                ImageButton bad = view.findViewById(R.id.main_bad);
-                TextView bad_num = view.findViewById(R.id.main_bad_number);
-                bad.setBackgroundResource(R.drawable.bad_blue);
-                bad_num.setText(String.valueOf((naive[i]+1)));
-                if(is_bad==false){
-                    is_bad=true;
-                    String url = "http://bihu.jay86.com/naive.php";
-                    StringBuilder ask = new StringBuilder();
-                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
-                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                int status = jsonObject.getInt("status");
-                                if(status == 200){
-                                    if(status==200){
-                                        Log.d("点赞", "bad: succeed!");
-                                    }else{
-                                        Log.d("点赞", "bad: failed!");
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }else{
-                    is_bad=false;
-                    bad.setBackgroundResource(R.drawable.bad);
-                    bad_num.setText(String.valueOf((naive[i])));
-                    String url = "http://bihu.jay86.com/cancelNaive.php";
-                    StringBuilder ask = new StringBuilder();
-                    ask.append("id="+questionId[i]+"&type=1"+"&token="+user.getToken());
-                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                int status = jsonObject.getInt("status");
-                                if(status==200){
-                                    Log.d("点赞", "cancel_bad: succeed!");
-                                }else{
-                                    Log.d("点赞", "cancel_bad: failed!");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+       adapter.setOnItemCommentsClickListener(new mRecyclerViewAdapter.onItemCommentsListener() {
+           @Override
+           public void onCommentsClick(int i) {
+               Intent intent = new Intent();
+               intent.setClass(MainActivity.this,AnswerActivity.class);
+               Bundle bundle = new Bundle();
+               bundle.putInt("id",questionId[i]);
+               intent.putExtras(bundle);
+               startActivity(intent);
+           }
+       });
 
-                }
-            }
-        });
-        /**
-         * like
-         */
-        adapter.setOnItemLikeClickListener(new mRecyclerViewAdapter.onItemLikeListener() {
-            @Override
-            public void onLikeClick(int i) {
-                View view = recyclerView.getChildAt(i);
-                ImageButton like = view.findViewById(R.id.main_like);
-                like.setBackgroundResource(R.drawable.like_blue);
-                if(is_like==false){
-                    is_like=true;
-                    String url = "http://bihu.jay86.com/favorite.php";
-                    StringBuilder ask = new StringBuilder();
-                    ask.append("qid="+questionId[i]+"&token="+user.getToken());
-                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                int status = jsonObject.getInt("status");
-                                if(status==200){
-                                    Log.d("点赞", "like: succeed!");
-                                }else{
-                                    Log.d("点赞", "like: failed!");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
 
-                }else{
-                    is_like=false;
-                    like.setBackgroundResource(R.drawable.like);
-                    String url = "http://bihu.jay86.com/cancelFavorite.php";
-                    StringBuilder ask = new StringBuilder();
-                    ask.append("qid="+questionId[i]+"&token="+user.getToken());
-                    NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                int status = jsonObject.getInt("status");
-                                if(status==200){
-                                    Log.d("点赞", "cancel_like: succeed!");
-                                }else{
-                                    Log.d("点赞", "cancel_like: failed!");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
 
@@ -580,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                 }String url = "http://bihu.jay86.com/getQuestionList.php";
                 StringBuilder getItem = new StringBuilder();
                 String token = user.getToken();
-                getItem.append("page=0"+"&token="+token);
+                getItem.append("page=0"+"&count=20"+"&token="+token);
                 //加载
                 NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
                     @Override

@@ -9,55 +9,61 @@
     android:background="@drawable/sky"
     tools:context="com.example.mac.bihu.Activity.ChangeAvatarActivity">
 
-    <Button
-        android:id="@+id/change_camera"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:background="#60000000"
-        android:text="拍照"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"/>
-    <Button
-        android:id="@+id/change_picture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:background="#60000000"
-        android:text="从相册上传"/>
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/change_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:background="#60000000"
+            android:text="拍照(暂不可用)"/>
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"/>
-    <Button
-        android:id="@+id/change_ask"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#60000000"
-        android:textColor="#000000"
-        android:text="确认选择此头像"/>
+        <Button
+            android:id="@+id/change_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:background="#60000000"
+            android:text="从相册上传"/>
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="19dp" />
+        <Button
+            android:id="@+id/change_ask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#60000000"
+            android:textColor="#000000"
+            android:text="确认选择此头像"/>
 
-    <Button
-        android:id="@+id/change_back"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#60000000"
-        android:textColor="#000000"
-        android:text="返回"/>
-    <ImageView
-        android:id="@+id/see_pic"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/change_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#60000000"
+            android:textColor="#000000"
+            android:text="返回"/>
+    </LinearLayout>
     <TextView
         android:textSize="30sp"
         android:id="@+id/see_infor"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/see_pic"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
 
 </LinearLayout>

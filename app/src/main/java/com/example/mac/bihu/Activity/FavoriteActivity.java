@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
@@ -42,6 +41,8 @@ public class FavoriteActivity extends AppCompatActivity {
     private boolean[] is_exciting;
     private boolean[] is_naive;
 
+    public static int[] fav_questionId;
+
     private LinearLayoutManager layoutManager;
     private mFavoriteAdapter adapter;
 
@@ -68,7 +69,7 @@ public class FavoriteActivity extends AppCompatActivity {
         authorAvatarlist = new ArrayList<>();
         is_exciting = new boolean[40];
         is_naive = new boolean[40];
-
+        fav_questionId = new int[40];
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -76,7 +77,7 @@ public class FavoriteActivity extends AppCompatActivity {
                 StringBuilder getItem = new StringBuilder();
                 user =(mUser) getApplication();
                 String token = user.getToken();
-                getItem.append("page=0" + "&token=" + token);
+                getItem.append("page=0" +"count=20"+ "&token=" + token);
                 NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
                     @Override
                     public void onResponse(String response) {
@@ -99,6 +100,7 @@ public class FavoriteActivity extends AppCompatActivity {
                                 authorNamelist.add(object.getString("authorName"));
                                 is_exciting[i] = object.getBoolean("is_exciting");
                                 is_naive[i] = object.getBoolean("is_naive");
+                                fav_questionId[i] = object.getInt("id");
                             }
                             adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
                                     answerCountlist, authorNamelist, authorAvatarlist, titlelist,
@@ -141,34 +143,26 @@ public class FavoriteActivity extends AppCompatActivity {
         adapter.onItemClickListner(new mFavoriteAdapter.OnItemClickListener() {
             @Override
             public void OnClickItem(View view, int position) {
-                Toast.makeText(FavoriteActivity.this,"第"+position+"个item",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                intent.setClass(FavoriteActivity.this,itemTouchActivity.class);
+                bundle.putInt("qid",fav_questionId[position]);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
         adapter.setOnItemCommentsClickListener(new mFavoriteAdapter.onItemCommentsListener() {
             @Override
             public void onCommentsClick(int i) {
-                Toast.makeText(FavoriteActivity.this,"第"+i+"个comments",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setClass(FavoriteActivity.this,AnswerActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",fav_questionId[i]);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
 
-            }
-        });
-        adapter.setOnItemGoodClickListener(new mFavoriteAdapter.onItemGoodListener() {
-            @Override
-            public void onGoodClick(int i) {
-                Toast.makeText(FavoriteActivity.this,"第"+i+"个good",Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.setOnItemBadClickListener(new mFavoriteAdapter.onItemBadListener() {
-            @Override
-            public void onBadClick(int i) {
-                Toast.makeText(FavoriteActivity.this,"第"+i+"个bad",Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.setOnItemLikeClickListener(new mFavoriteAdapter.onItemLikeListener() {
-            @Override
-            public void onLikeClick(int i) {
-                Toast.makeText(FavoriteActivity.this,"第"+i+"个like",Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 }

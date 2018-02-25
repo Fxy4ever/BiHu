@@ -89,7 +89,6 @@
                     android:id="@+id/main_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:text="This is a test"
                     android:textSize="17dp" />

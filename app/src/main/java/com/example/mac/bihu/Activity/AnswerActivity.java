@@ -29,6 +29,7 @@ public class AnswerActivity extends AppCompatActivity {
         final Button back = findViewById(R.id.answer_back);
         Button commit = findViewById(R.id.answer_commit);
         editText = findViewById(R.id.answer_content);
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,6 +38,11 @@ public class AnswerActivity extends AppCompatActivity {
                 AnswerActivity.this.finish();
             }
         });
+
+        Bundle bundle = getIntent().getExtras();
+        final int id = bundle.getInt("id");
+        Log.d("fxy", "id= "+ id);
+
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,8 +55,6 @@ public class AnswerActivity extends AppCompatActivity {
                 user = (mUser) getApplication();
                 String token = user.getToken();
                 String url = "http://bihu.jay86.com/answer.php";
-                Bundle bundle = getIntent().getExtras();
-                int id = bundle.getInt("id");
                 StringBuilder answer = new StringBuilder();
                 answer.append("qid="+id+"&content="+content+"&token="+token);
                 Log.d("fxy", "answer: "+answer.toString());

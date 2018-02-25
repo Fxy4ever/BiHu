@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
@@ -33,10 +32,12 @@ public class itemTouchActivity extends AppCompatActivity {
     private List<String> contentlist;
     private int[]         exciting;
     private int[]         naive;
+    private int[]       answerId;
+    private int[]       best;
     private boolean[] is_exciting;
     private boolean[] is_naive;
 
-    int qid;
+    public static int qid;
 
     private mUser user;
     @Override
@@ -55,6 +56,8 @@ public class itemTouchActivity extends AppCompatActivity {
         naive = new int[40];
         is_exciting = new boolean[40];
         is_naive = new boolean[40];
+        answerId = new int[40];
+        best = new int[40];
         Bundle bundle = getIntent().getExtras();
         qid = bundle.getInt("qid");
         user = (mUser) getApplication();
@@ -65,7 +68,7 @@ public class itemTouchActivity extends AppCompatActivity {
             public void run() {
                 String url = "http://bihu.jay86.com/getAnswerList.php";
                 StringBuilder request = new StringBuilder();
-                request.append("page="+"0"+"&qid="+qid+"&token="+user.getToken());
+                request.append("page="+"0"+"&count=100"+"&qid="+qid+"&token="+user.getToken());
                 NetUtils.post(url, request.toString(), new NetUtils.Callback() {
                     @Override
                     public void onResponse(String response)  {
@@ -83,10 +86,12 @@ public class itemTouchActivity extends AppCompatActivity {
                                 authorNamelist.add(object.getString("authorName"));
                                 contentlist.add(object.getString("content"));
                                 exciting[i] = object.getInt("exciting");
+                                best[i] = object.getInt("best");
                                 authorAvatarlist.add(object.getString("authorAvatar"));
                                 naive[i] = object.getInt("naive");
                                 is_exciting[i] = object.getBoolean("is_exciting");
                                 is_naive[i] = object.getBoolean("is_naive");
+                                answerId[i] = object.getInt("id");
                             }
                             initRecyclerview();
                             initItemButton();
@@ -101,7 +106,7 @@ public class itemTouchActivity extends AppCompatActivity {
     public void initRecyclerview(){
         recyclerView = findViewById(R.id.inside_recyclerview);
         adapter = new MyInsideRecyclerAdapter(datelist,authorNamelist,authorAvatarlist,contentlist,exciting,naive,
-                is_exciting,is_naive);
+                is_exciting,is_naive,best,answerId);
         manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
@@ -114,26 +119,6 @@ public class itemTouchActivity extends AppCompatActivity {
                 Intent intent = new Intent(itemTouchActivity.this,MainActivity.class);
                 startActivity(intent);
                 itemTouchActivity.this.finish();
-            }
-        });
-
-
-        adapter.setOnItemGoodClickListener(new MyInsideRecyclerAdapter.onItemGoodListener() {
-            @Override
-            public void onGoodClick(int i) {
-                Toast.makeText(itemTouchActivity.this,"第"+i+"个good",Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.setOnItemBadClickListener(new MyInsideRecyclerAdapter.onItemBadListener() {
-            @Override
-            public void onBadClick(int i) {
-                Toast.makeText(itemTouchActivity.this,"第"+i+"个bad",Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.onItemClickListner(new MyInsideRecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void OnClickItem(View view, int position) {
-                Toast.makeText(itemTouchActivity.this,"第"+position+"个item",Toast.LENGTH_SHORT).show();
             }
         });
     }

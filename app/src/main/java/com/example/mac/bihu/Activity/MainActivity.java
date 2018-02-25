@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                         final MyDialog ChangePasswordDialog = new MyDialog(MainActivity.this);
                         ChangePasswordDialog.setDialogLayout(LayoutInflater.from(MainActivity.this).
                                 inflate(R.layout.changepassword_dialog, null));
-                        ChangePasswordDialog.setDialogHeightWidth(600, 1000);
                         ChangePasswordDialog.show();
                         Window pass_window = ChangePasswordDialog.getWindow();
 

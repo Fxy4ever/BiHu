@@ -14,18 +14,20 @@
 
 注册登陆<br>
 -----
-  https://github.com/fengxinyao1/BiHu/tree/master/app/picture/注册登陆.gif
+  ![img](https://github.com/fengxinyao1/BiHu/tree/master/app/picture/注册登陆.gif)
   
   更换头像<br>
 -----
-  https://github.com/fengxinyao1/BiHu/tree/master/app/picture/更改头像.gif
+![img](https://github.com/fengxinyao1/BiHu/tree/master/app/picture/更改头像.gif)
+ 
   
   更改密码<br>
 -----
-  https://github.com/fengxinyao1/BiHu/tree/master/app/picture/更改密码.gif
-  
+![img](https://github.com/fengxinyao1/BiHu/tree/master/app/picture/更改密码.gif)
+  
   其他功能<br>
 -----
-  https://github.com/fengxinyao1/BiHu/tree/master/app/picture/其他.gif
+![img](https://github.com/fengxinyao1/BiHu/tree/master/app/picture/其他.gif)
+  
   
   

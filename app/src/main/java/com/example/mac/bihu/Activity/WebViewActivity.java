@@ -7,7 +7,6 @@ import android.view.KeyEvent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.example.mac.bihu.R;
 
@@ -25,14 +24,14 @@ public class WebViewActivity extends AppCompatActivity {
     private void init(){
         webView = findViewById(R.id.webView);
         webView.loadUrl("https://www.baidu.com");
-        webView.setWebViewClient(new WebViewClient(){//这是一个工具处理类
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-               //true用webview打开
-                view.loadUrl(url);
-                return true;
-            }
-        });
+//        webView.setWebViewClient(new WebViewClient(){//这是一个工具处理类
+//            @Override
+//            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//               //true用webview打开
+//                view.loadUrl(url);
+//                return true;
+//            }
+//        });
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -76,7 +75,7 @@ public class WebViewActivity extends AppCompatActivity {
                 webView.goBack();
                 return true;
             } else {
-                System.exit(0);//退出程序
+                WebViewActivity.this.finish();
             }
         }
         return super.onKeyDown(keyCode, event);

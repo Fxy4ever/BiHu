@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         addQuestion1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                closeMenu(addQuestion);
                 Intent intent1 = new Intent(MainActivity.this, AskQuestionActivity.class);
                 startActivity(intent1);
             }
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         addQuestion2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                closeMenu(addQuestion);
                 Intent intent1 = new Intent(MainActivity.this, WebViewActivity.class);
                 startActivity(intent1);
             }

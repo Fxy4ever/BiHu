@@ -63,6 +63,8 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
     private String bucket = "fxymine4ever";
     private String upKey;
 
+    private boolean is_succeed = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,8 +112,6 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ChangeAvatarActivity.this,MainActivity.class);
-                startActivity(intent);
                 ChangeAvatarActivity.this.finish();
             }
         });
@@ -127,35 +127,44 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                     Log.d("fxy", "clickPost: ");
                     Toast.makeText(ChangeAvatarActivity.this,"正在获取token,请等待",Toast.LENGTH_SHORT).show();
                 }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadManager.put(image_Path, upKey, uptoken, new UpCompletionHandler() {
+                    if(image_Path!=null){
+                        new Thread(new Runnable() {
                             @Override
-                            public void complete(String key, ResponseInfo info, JSONObject response) {
-                                Log.d("qiniu", "path="+image_Path+"  upkey="+upKey+"  uptoken="+uptoken);
-                                if(info.isOK()){
-                                    Log.d("qiniu", "complete:succeed ");
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            title.setText("上传成功");
+                            public void run() {
+                                uploadManager.put(image_Path, upKey, uptoken, new UpCompletionHandler() {
+                                    @Override
+                                    public void complete(String key, ResponseInfo info, JSONObject response) {
+                                        Log.d("qiniu", "path="+image_Path+"  upkey="+upKey+"  uptoken="+uptoken);
+                                        if(info.isOK()){
+                                            Log.d("qiniu", "complete:succeed ");
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    title.setText("上传成功");
+                                                    is_succeed=true;
+                                                }
+                                            });
+                                        }else{
+                                            Log.d("qiniu" ,"complete:failed ");
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    title.setText("上传失败");
+                                                    is_succeed=false;
+                                                }
+                                            });
                                         }
-                                    });
-                                }else{
-                                    Log.d("qiniu" ,"complete:failed ");
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            title.setText("上传失败");
-                                        }
-                                    });
-                                }
+                                    }
+                                },null);
+                                    ChangeAvatarFromFuwuqi();
+
+
                             }
-                        },null);
-                        ChangeAvatarFromFuwuqi();
+                        }).start();
+                    }else {
+                        Toast.makeText(ChangeAvatarActivity.this,"请上传头像",Toast.LENGTH_SHORT).show();
                     }
-                }).start();
+
             }
         });
     }
@@ -202,33 +211,30 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
 //    }
 
     private void ChangeAvatarFromFuwuqi(){
-        user = (mUser) getApplication();
-        String token = user.getToken();
-        StringBuilder ask = new StringBuilder();
-        String fileName = "p4lin3s6h.bkt.clouddn.com";
-        final String downUrl = "http://" +fileName + "/" + upKey;
-        ask.append("token="+token+"&avatar="+downUrl);
-        String url = "http://bihu.jay86.com/modifyAvatar.php";
-        NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    int status = jsonObject.getInt("status");
-                    if(status==200){
-                        Toast.makeText(ChangeAvatarActivity.this,"更换成功",Toast.LENGTH_SHORT).show();
-//                        user.setAvatar(downUrl);
-                        Intent intent1 = new Intent(ChangeAvatarActivity.this,LoginActivity.class);
-                        startActivity(intent1);
-                        ChangeAvatarActivity.this.finish();
-                    }else{
-                        Toast.makeText(ChangeAvatarActivity.this,"头像更换失败 错误："+status,Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+           user = (mUser) getApplication();
+           String token = user.getToken();
+           StringBuilder ask = new StringBuilder();
+           String fileName = "p4lin3s6h.bkt.clouddn.com";
+           final String downUrl = "http://" +fileName + "/" + upKey;
+           ask.append("token="+token+"&avatar="+downUrl);
+           String url = "http://bihu.jay86.com/modifyAvatar.php";
+           NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
+               @Override
+               public void onResponse(String response) {
+                   try {
+                       JSONObject jsonObject = new JSONObject(response);
+                       int status = jsonObject.getInt("status");
+                       if(status==200){
+                           Toast.makeText(ChangeAvatarActivity.this,"更换成功",Toast.LENGTH_SHORT).show();
+                           ChangeAvatarActivity.this.finish();
+                       }else{
+                           Toast.makeText(ChangeAvatarActivity.this,"头像更换失败 错误："+status,Toast.LENGTH_SHORT).show();
+                       }
+                   } catch (JSONException e) {
+                       e.printStackTrace();
+                   }
+               }
+           });
     }
     @Override
     public void onClick(View view) {

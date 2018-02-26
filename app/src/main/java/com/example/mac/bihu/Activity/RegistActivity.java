@@ -1,9 +1,8 @@
 package com.example.mac.bihu.Activity;
 
-import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +24,6 @@ public class RegistActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RegistActivity.this,LoginActivity.class);
-                startActivity(intent);
                 RegistActivity.this.finish();
             }
         });
@@ -53,8 +50,7 @@ public class RegistActivity extends AppCompatActivity {
                                     int status = obj.getInt("status");
                                     if(status==200){
                                         Toast.makeText(RegistActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(RegistActivity.this,LoginActivity.class);
-                                        startActivity(intent);
+                                        RegistActivity.this.finish();
                                     }else{
                                         Toast.makeText(RegistActivity.this,"注册失败",Toast.LENGTH_SHORT).show();
                                     }

@@ -1,9 +1,8 @@
 package com.example.mac.bihu.Activity;
 
-import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +30,7 @@ public class AskQuestionActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent_back = new Intent(AskQuestionActivity.this,MainActivity.class);
-                startActivity(intent_back);
+                AskQuestionActivity.this.finish();
             }
         });
         commit.setOnClickListener(new View.OnClickListener() {
@@ -63,8 +61,7 @@ public class AskQuestionActivity extends AppCompatActivity {
                                         int status = object.getInt("status");
                                         if(status==200){
                                             Toast.makeText(AskQuestionActivity.this,"提交成功",Toast.LENGTH_SHORT).show();
-                                            Intent intent_back = new Intent(AskQuestionActivity.this,MainActivity.class);
-                                            startActivity(intent_back);
+                                            AskQuestionActivity.this.finish();
                                         }else{
 
                                             Toast.makeText(AskQuestionActivity.this,String.valueOf(status),Toast.LENGTH_SHORT).show();

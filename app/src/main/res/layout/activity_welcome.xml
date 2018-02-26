@@ -5,10 +5,25 @@
     android:gravity="bottom|center"
     android:orientation="vertical"
     >
-    <ImageView
-        android:layout_width="110dp"
-        android:layout_height="169dp"
-        android:background="@drawable/login_logo"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/login_logo"/>
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="寻找更大的世界"
+            android:textSize="13sp"
+            android:textColor="#7CB6B6"/>
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"

@@ -134,8 +134,6 @@ public class FavoriteActivity extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(FavoriteActivity.this,MainActivity.class);
-                startActivity(intent);
                 FavoriteActivity.this.finish();
             }
         });

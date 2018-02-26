@@ -1,6 +1,5 @@
 package com.example.mac.bihu.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -116,8 +115,6 @@ public class itemTouchActivity extends AppCompatActivity {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(itemTouchActivity.this,MainActivity.class);
-                startActivity(intent);
                 itemTouchActivity.this.finish();
             }
         });

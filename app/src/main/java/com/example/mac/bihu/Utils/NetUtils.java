@@ -4,21 +4,15 @@ import android.accounts.NetworkErrorException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.UUID;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 /**
  * Created by HP on 2017/12/28.
@@ -131,8 +125,6 @@ public class NetUtils{
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-
         }
         return bitmap;
     }

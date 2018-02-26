@@ -169,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.little_item1:
                         Intent intent3 = new Intent(MainActivity.this, ChangeAvatarActivity.class);
                         startActivity(intent3);
-                        MainActivity.this.finish();
                         break;
                     /**
                      * 更改密码的dialog
@@ -221,7 +220,6 @@ public class MainActivity extends AppCompatActivity {
                                                         Toast.makeText(MainActivity.this, "更改成功 请重新登陆", Toast.LENGTH_SHORT).show();
                                                         Intent intent = new Intent(MainActivity.this,LoginActivity.class);
                                                         startActivity(intent);
-                                                        MainActivity.this.finish();
                                                     } else {
                                                         Toast.makeText(MainActivity.this, status, Toast.LENGTH_SHORT).show();
                                                     }

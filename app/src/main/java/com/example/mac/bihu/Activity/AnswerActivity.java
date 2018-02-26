@@ -1,8 +1,7 @@
 package com.example.mac.bihu.Activity;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,8 +32,6 @@ public class AnswerActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AnswerActivity.this,MainActivity.class);
-                startActivity(intent);
                 AnswerActivity.this.finish();
             }
         });
@@ -69,8 +66,6 @@ public class AnswerActivity extends AppCompatActivity {
                                    @Override
                                    public void run() {
                                        Toast.makeText(AnswerActivity.this,"回答成功",Toast.LENGTH_SHORT).show();
-                                       Intent intent = new Intent(AnswerActivity.this,MainActivity.class);
-                                       startActivity(intent);
                                        AnswerActivity.this.finish();
                                    }
                                });

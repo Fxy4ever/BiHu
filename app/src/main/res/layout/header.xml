@@ -13,12 +13,11 @@
         android:orientation="vertical"
         android:gravity="center"
         >
-        <com.makeramen.roundedimageview.RoundedImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/navigation_header_avatar"
             android:layout_marginTop="70dp"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            app:riv_oval="true"
             android:layout_gravity="center"
             />
     </LinearLayout>

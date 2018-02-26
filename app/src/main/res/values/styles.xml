@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -10,5 +10,13 @@
         <item name="android:textColorPrimary">@android:color/darker_gray</item>
         <item name="colorPrimary">@color/colorWhite</item>
     </style>
+
+    <style name="checkbox_style">
+        <!--波纹的颜色-->
+        <item name="android:colorControlHighlight" tools:targetApi="lollipop">@color/colorPrimary</item>
+        <!--选中的颜色-->
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+    1
 
 </resources>

@@ -71,7 +71,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(position)+"?jmageView2/1/w/200/h/200/q/75|imageslim", new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
                             if(mBitmap==null){

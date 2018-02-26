@@ -32,14 +32,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        app:riv_oval="true"
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/favorite_user_avatar"
+                        android:src="@mipmap/ic_launcher"
                         android:layout_width="72dp"
                         android:layout_height="72dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="10dp"
-                        />
+                        android:paddingTop="10dp" />
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                             android:paddingTop="10dp"
                             android:text="Username"
                             android:textColor="#000000"
-                            android:textSize="18dp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/favorite_time"
@@ -62,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:paddingLeft="10dp"
                             android:text="2018-02-04 16:00:00"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -83,7 +83,7 @@
                     android:paddingLeft="10dp"
                     android:text="Test"
                     android:textColor="#000000"
-                    android:textSize="22dp" />
+                    android:textSize="22sp" />
 
                 <TextView
                     android:id="@+id/favorite_content"
@@ -92,7 +92,7 @@
                     android:maxLines="3"
                     android:paddingLeft="20dp"
                     android:text="This is a test"
-                    android:textSize="17dp" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:text="2018-02-04 16:54:00更新"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -132,7 +132,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:text="(0)"
-                        android:textSize="13dp" />
+                        android:textSize="13sp" />
 
                     <Button
                         android:focusable="false"
@@ -146,7 +146,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:text="(0)"
-                        android:textSize="13dp" />
+                        android:textSize="13sp" />
 
                     <Button
                         android:focusable="false"
@@ -160,7 +160,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:text="(0)"
-                        android:textSize="13dp" />
+                        android:textSize="13sp" />
 
                     <Button
                         android:focusable="false"

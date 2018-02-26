@@ -15,7 +15,7 @@
             android:textColor="#FFFFFF"
             android:layout_width="40dp"
             android:background="#4586CA"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:layout_height="?actionBarSize"
             />
         <android.support.v7.widget.Toolbar

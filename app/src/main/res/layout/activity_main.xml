@@ -9,43 +9,123 @@
 
 
     <android.support.v4.widget.DrawerLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
+        <RelativeLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/main_toolbar"
+            android:layout_height="match_parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                app:title="逼乎"
-                app:titleTextColor="#FFFFFF"
-                android:background="#4586CA"
-
-                >
-            </android.support.v7.widget.Toolbar>
-
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/SwipeRefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/main_rec"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/main_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="?actionBarSize"
+                    app:title="逼乎"
+                    app:titleTextColor="#FFFFFF"
+                    android:background="#4586CA"
 
-                </android.support.v7.widget.RecyclerView>
+                    >
+                </android.support.v7.widget.Toolbar>
 
-            </android.support.v4.widget.SwipeRefreshLayout>
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/SwipeRefreshLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/main_rec"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                </android.support.v4.widget.SwipeRefreshLayout>
 
 
 
-        </LinearLayout>
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/cloud"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:background="#60000000"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginRight="85dp"
+                    android:src="@drawable/add"
+                    android:backgroundTint="#4586CA"
+                    android:id="@+id/main_addQuestion1"
+                    app:fabSize="mini"
+                    />
+                <TextView
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="130dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="百度"/>
+                <android.support.design.widget.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="85dp"
+                    android:layout_marginRight="30dp"
+                    android:src="@drawable/add"
+                    android:backgroundTint="#4586CA"
+                    android:id="@+id/main_addQuestion2"
+                    app:fabSize="mini"
+                    />
+                <TextView
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="42dp"
+                    android:layout_marginRight="130dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="提问"/>
+
+
+            </RelativeLayout>
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/add"
+                android:backgroundTint="#4586CA"
+                android:id="@+id/main_addQuestion"
+                app:fabSize="normal"
+                />
+
+        </RelativeLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/main_navigation"
@@ -54,7 +134,6 @@
             android:fitsSystemWindows="true"
             android:layout_gravity="start"
             android:background="#FFFFFF"
-
             app:menu="@menu/navigation"
             >
         </android.support.design.widget.NavigationView>

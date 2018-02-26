@@ -22,14 +22,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:textSize="30sp"
+                android:textSize="20sp"
                 android:textColor="#FFFFFF"
                 android:text="\u003C"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
-                android:textSize="20dp"
+                android:textSize="15sp"
                 android:text="提问"/>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@null"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textColor="#FFFFFF"
                     android:text="提交" />
 
@@ -70,6 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp"/>
             <EditText
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#FFFFFF"
                 android:id="@+id/ask_title"
                 android:maxLines="1"
@@ -78,7 +79,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@null"
-                android:textSize="20sp"
                 android:paddingLeft="20dp"
                 android:textColorHint="#A6B0BA"
                 android:hint="请输入标题(最多12个字)"
@@ -105,13 +105,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp"/>
             <EditText
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+
                 android:id="@+id/ask_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:textColor="#FFFFFF"
                 android:maxLines="30"
-                android:textSize="20sp"
                 android:paddingLeft="20dp"
                 android:textColorHint="#A6B0BA"
                 android:hint="请输入正文"

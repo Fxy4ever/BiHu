@@ -128,7 +128,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position)+"?imageView2/1/w/200/h/200/q/75|imageslim", new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
                             if(mBitmap==null){

@@ -225,8 +225,10 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                        JSONObject jsonObject = new JSONObject(response);
                        int status = jsonObject.getInt("status");
                        if(status==200){
-                           Toast.makeText(ChangeAvatarActivity.this,"更换成功",Toast.LENGTH_SHORT).show();
                            ChangeAvatarActivity.this.finish();
+                           Toast.makeText(ChangeAvatarActivity.this,"更换成功",Toast.LENGTH_SHORT).show();
+                           Intent intent = new Intent(ChangeAvatarActivity.this,LoginActivity.class);
+                           startActivity(intent);
                        }else{
                            Toast.makeText(ChangeAvatarActivity.this,"头像更换失败 错误："+status,Toast.LENGTH_SHORT).show();
                        }

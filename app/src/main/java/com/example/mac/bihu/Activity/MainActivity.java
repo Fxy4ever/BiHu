@@ -1,9 +1,11 @@
 package com.example.mac.bihu.Activity;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,8 +20,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +32,6 @@ import com.example.mac.bihu.Utils.NetUtils;
 import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
 import com.example.mac.bihu.mUser;
 import com.example.mac.bihu.view.MyDialog;
-import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,12 +40,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity {
     private mUser user;
 
 
     private TextView usernameTv;
-    private RoundedImageView userAvatar;
+    private CircleImageView userAvatar;
 
 
     private List<String> datelist;
@@ -72,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isRefresh;
-
+    private boolean fabOpened;
+    private RelativeLayout layout;//写个蒙版
+    private FloatingActionButton addQuestion;
+    private FloatingActionButton addQuestion1;
+    private FloatingActionButton addQuestion2;
 
 
     @Override
@@ -80,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        initFloatButton();
         initHeader();
         setToggle();
         setListener();
@@ -103,6 +113,65 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("逼乎");
+    }
+    public void initFloatButton(){
+        layout = findViewById(R.id.cloud);
+        addQuestion = findViewById(R.id.main_addQuestion);
+        addQuestion1 = findViewById(R.id.main_addQuestion1);
+        addQuestion2 = findViewById(R.id.main_addQuestion2);
+        addQuestion1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(MainActivity.this, AskQuestionActivity.class);
+                startActivity(intent1);
+            }
+        });
+        addQuestion2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(MainActivity.this, WebViewActivity.class);
+                startActivity(intent1);
+            }
+        });
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeMenu(addQuestion);
+            }
+        });
+
+        assert addQuestion != null;
+        addQuestion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!fabOpened){
+                    openMenu(view);
+                }else{
+                    closeMenu(view);
+                }
+            }
+        });
+    }
+    public void openMenu(View view){
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view,"rotation",0,-155,-135);//实现惯性
+        animator.setDuration(500);
+        animator.start();
+        layout.setVisibility(View.VISIBLE);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0,0.7f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        layout.startAnimation(alphaAnimation);
+        fabOpened = true;
+    }
+    public void closeMenu(View view){
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view,"rotation",-135,20,0);
+        animator.setDuration(500);
+        animator.start();
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.7f,0);
+        alphaAnimation.setDuration(500);
+        layout.startAnimation(alphaAnimation);
+        layout.setVisibility(View.GONE);
+        fabOpened=false;
     }
 
     public void initHeader() {

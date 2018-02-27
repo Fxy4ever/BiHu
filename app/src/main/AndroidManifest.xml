@@ -30,6 +30,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+
         <activity android:name=".Activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

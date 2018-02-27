@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
+import com.example.mac.bihu.Utils.mLayoutManager;
 import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
 import com.example.mac.bihu.mUser;
 import com.example.mac.bihu.view.MyDialog;
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> titlelist;
     private List<String> contentlist;
     private List<String> authorAvatarlist;
+    private List<String> imageList;
     private int[] exciting;
     private int[] naive;
     private List<String> recentlist;
@@ -65,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
     public static int[] questionId;
 
     private mRecyclerViewAdapter adapter;
-    private LinearLayoutManager layoutManager;
+    private com.example.mac.bihu.Utils.mLayoutManager layoutManager;
+
+    private boolean is_refresh = false;
     /**
      * 定义recyclerview的东西
      */
@@ -114,6 +117,17 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("逼乎");
     }
+
+    @Override//设置了后台
+    public void onBackPressed() {
+        moveTaskToBack(false);//转向后台
+
+        Intent toHome = new Intent(Intent.ACTION_MAIN);//转向主屏幕
+        toHome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//如果设置，这个Activity会成为历史stack中一个新Task的开始。
+        toHome.addCategory(Intent.CATEGORY_HOME);
+        startActivity(toHome);
+    }
+
     public void initFloatButton(){
         layout = findViewById(R.id.cloud);
         addQuestion = findViewById(R.id.main_addQuestion);
@@ -350,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
                                 naive[i] = object.getInt("naive");
                                 recentlist.add(object.getString("recent"));
                                 authorAvatarlist.add(object.getString("authorAvatar"));
+                                imageList.add(object.getString("images"));
                                 answerCountlist[i] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
                                 is_exciting[i] = object.getBoolean("is_exciting");
@@ -376,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
         exciting = new int[40];
         naive = new int[40];
         recentlist = new ArrayList<>();
+        imageList = new ArrayList<>();
         answerCountlist = new int[40];
         authorAvatarlist = new ArrayList<>();
         authorNamelist = new ArrayList<>();
@@ -388,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
     public void initRecyclerView() {
         recyclerView = findViewById(R.id.main_rec);
         adapter = new mRecyclerViewAdapter(datelist,answerCountlist,authorNamelist,titlelist,contentlist,exciting,naive,
-                recentlist,is_exciting,is_naive,is_favorite,authorAvatarlist,user.getToken());
+                recentlist,is_exciting,is_naive,is_favorite,authorAvatarlist,user.getToken(),imageList);
         recyclerView.setAdapter(adapter);
         /**
          * item点击事件
@@ -404,8 +420,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        layoutManager = new LinearLayoutManager(this);
+        layoutManager = new mLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        
     }
 //    public void setScrollListner(){
 //        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -467,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
                 datelist.clear();
                 recentlist.clear();
                 authorNamelist.clear();
+                imageList.clear();
                 for (int i = 0; i < titlelist.size(); i++) {
                     exciting[i] = 0;
                     naive[i] = 0;
@@ -475,7 +493,8 @@ public class MainActivity extends AppCompatActivity {
                     is_naive[i] = false;
                     is_favorite[i] = false;
                     questionId[i] = 0;
-                }String url = "http://bihu.jay86.com/getQuestionList.php";
+                }
+                String url = "http://bihu.jay86.com/getQuestionList.php";
                 StringBuilder getItem = new StringBuilder();
                 String token = user.getToken();
                 getItem.append("page=0"+"&count=20"+"&token="+token);
@@ -497,6 +516,7 @@ public class MainActivity extends AppCompatActivity {
                                 exciting[i] = object.getInt("exciting");
                                 naive[i] = object.getInt("naive");
                                 recentlist.add(object.getString("recent"));
+                                imageList.add(object.getString("images"));
                                 authorAvatarlist.add(object.getString("authorAvatar"));
                                 answerCountlist[i] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
@@ -506,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
                                 questionId[i] = object.getInt("id");
                             }
                             adapter.refreshData(datelist,answerCountlist,authorNamelist,titlelist,contentlist,exciting,naive,
-                                    recentlist,is_exciting,is_naive,is_favorite,authorAvatarlist,questionId);
+                                    recentlist,is_exciting,is_naive,is_favorite,authorAvatarlist,questionId,imageList);
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();

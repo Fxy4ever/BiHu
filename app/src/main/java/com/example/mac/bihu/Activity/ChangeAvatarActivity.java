@@ -60,7 +60,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
     private static String uptoken;//服务器请求的token
     private String accessKey="KBmqZoICK5wTbYCPLI934g_zv0Zitfbf3-6zRwT7";
     private String secretKey="R_JBA9UyV_zGohkjpyxnwfWaARsm1FkChvyVlMYr";
-    private String bucket = "fxymine4ever";
+    private String bucket = "fxymine3ever";
     private String upKey;
 
     private boolean is_succeed = false;
@@ -97,7 +97,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
         getTokenFromService();
         upKey = "image" + String.valueOf(Math.random());
         Configuration config = new Configuration.Builder()
-                .zone(Zone.zone2)
+                .zone(Zone.zone0)
                 .build();
         uploadManager = new UploadManager(config);
     }
@@ -214,9 +214,9 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
            user = (mUser) getApplication();
            String token = user.getToken();
            StringBuilder ask = new StringBuilder();
-           String fileName = "p4lin3s6h.bkt.clouddn.com";
+           String fileName = "p4sze9l87.bkt.clouddn.com";
            final String downUrl = "http://" +fileName + "/" + upKey;
-           ask.append("token="+token+"&avatar="+downUrl);
+           ask.append("token="+token+"&avatar="+downUrl+"?imageView2/2/w/200/h/200/q/75|imageslim");
            String url = "http://bihu.jay86.com/modifyAvatar.php";
            NetUtils.post(url, ask.toString(), new NetUtils.Callback() {
                @Override
@@ -345,11 +345,8 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
     private void handleImageOnKitKat(Intent data) {
         String imagePath = null;
         Uri uri = data.getData();
-//        如果uri是document类型，就通过读取document id进行处理
         if (DocumentsContract.isDocumentUri(this, uri)) {
             String docId = DocumentsContract.getDocumentId(uri);
-//            如果Uri的Authority是media格式的话，document id还需要进行解析，然后通过字符串
-//            分割方式取出后半部分才能得到真正的数字id
             if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
                 String id = docId.split(":")[1];
                 String selection = MediaStore.Images.Media._ID + "=" + id;
@@ -359,10 +356,9 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                 imagePath = getImagePath(contentUri, null);
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-//            如果是content类型的uri，则使用普通方式处理
             imagePath = getImagePath(uri, null);
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-//            如果是file类型，直接获取图片路径
+
             imagePath = uri.getPath();
         }
         image_Path = imagePath;

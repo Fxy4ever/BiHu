@@ -27,7 +27,7 @@ import static com.example.mac.bihu.Activity.MainActivity.questionId;
  */
 
 public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
-    private List<Bitmap> imageslist;
+    private List<String> imageslist;
     private List<String> datelist;
     private int[]        answerCountlist;
     private List<String> authorNamelist;
@@ -44,7 +44,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int FOOTER = 1;
     private int NORMAL = 2;
 
-    public mFavoriteAdapter(List<Bitmap> imageslist, List<String> datelist, List<String> recentlist,
+    public mFavoriteAdapter(List<String> imageslist, List<String> datelist, List<String> recentlist,
                                 int[] answerCountlist, List<String> authorNamelist, List<String> authorAvatarlist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive, List<String> recentlist1,
                                 boolean[] is_exciting, boolean[] is_naive,String token) {
@@ -122,13 +122,37 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(position)+"?jmageView2/1/w/200/h/200/q/75|imageslim", new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
                         @Override
-                        public void mBitmap(Bitmap mBitmap) {
+                        public void mBitmap(final Bitmap mBitmap) {
                             if(mBitmap==null){
                                 ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
                             }else{
-                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                                ((NormalViewHolder) holder).avatar.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    NetUtils.getBitmap(imageslist.get(position), new NetUtils.getBitmapCallback() {
+                        @Override
+                        public void mBitmap(final Bitmap mBitmap) {
+                            if(mBitmap==null){
+                                ((NormalViewHolder) holder).images.setImageResource(R.drawable.zhanwei);
+                                ViewGroup.LayoutParams params = ((NormalViewHolder) holder).images.getLayoutParams();
+                                params.height=10;
+                                params.width=10;
+                                ((NormalViewHolder) holder).images.setLayoutParams(params);
+                            }else{
+                               ((NormalViewHolder) holder).images.post(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       ((NormalViewHolder) holder).images.setImageBitmap(mBitmap);
+                                   }
+                               });
                             }
                         }
                     });
@@ -317,6 +341,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 naive[i+20] = object.getInt("naive");
                                 authorAvatarlist.add(object.getString("authorAvatar"));
                                 recentlist.add(object.getString("recent"));
+                                imageslist.add(object.getString("images"));
                                 answerCountlist[i+20] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
                                 is_exciting[i+20] = object.getBoolean("is_exciting");
@@ -350,7 +375,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
         ImageView avatar;
-        //        ImageView images;
+        ImageView images;
         Button comments;
         Button good;
         Button bad;
@@ -367,7 +392,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             exciting = itemView.findViewById(R.id.favorite_good_number);
             naive = itemView.findViewById(R.id.favorite_bad_number);
             avatar = itemView.findViewById(R.id.favorite_user_avatar);
-
+            images = itemView.findViewById(R.id.favorite_showPicture);
             comments = itemView.findViewById(R.id.favorite_comments);
             good = itemView.findViewById(R.id.favorite_good);
             bad = itemView.findViewById(R.id.favorite_bad);

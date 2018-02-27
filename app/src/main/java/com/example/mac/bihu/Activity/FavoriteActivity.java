@@ -1,7 +1,6 @@
 package com.example.mac.bihu.Activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +27,7 @@ public class FavoriteActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Toolbar toolbar;
 
-    private List<Bitmap> imageslist;
+    private List<String> imageslist;
     private List<String> datelist;
     private int[] answerCountlist;
     private List<String> authorNamelist;
@@ -53,8 +52,6 @@ public class FavoriteActivity extends AppCompatActivity {
         initThread();
         init();
         initToolbar();
-
-
     }
     public void initThread(){
         titlelist = new ArrayList<>();
@@ -95,6 +92,7 @@ public class FavoriteActivity extends AppCompatActivity {
                                 exciting[i] = object.getInt("exciting");
                                 naive[i] = object.getInt("naive");
                                 authorAvatarlist.add(object.getString("authorAvatar"));
+                                imageslist.add(object.getString("images"));
                                 recentlist.add(object.getString("recent"));
                                 answerCountlist[i] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
@@ -160,7 +158,6 @@ public class FavoriteActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
+
 }

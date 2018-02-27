@@ -93,12 +93,16 @@
                     android:text="This is a test"
                     android:textSize="17sp" />
 
-                <TextView
+                <LinearLayout
+                    android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#000000"
-                    android:textSize="22dp" />
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/main_showPicture"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/main_fresh_time"

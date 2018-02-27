@@ -29,13 +29,13 @@ import static com.example.mac.bihu.Activity.MainActivity.questionId;
  */
 
 public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
-    private List<Bitmap> imageslist;
     private List<String> datelist;
     private int[]        answerCountlist;
     private List<String> authorNamelist;
     private List<String> authorAvatarlist;
     private List<String> titlelist;
     private List<String> contentlist;
+    private List<String> imageList;
     private int[]         exciting;
     private int[]         naive;
     private List<String> recentlist;
@@ -52,7 +52,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
                                 List<String> recentlist, boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite
-    ,List<String> authorAvatarlist ,String token) {
+    ,List<String> authorAvatarlist ,String token,List<String> imageList) {
         this.datelist = datelist;
         this.answerCountlist = answerCountlist;
         this.authorNamelist = authorNamelist;
@@ -65,6 +65,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.is_naive = is_naive;
         this.is_favorite = is_favorite;
         this.authorAvatarlist = authorAvatarlist;
+        this.imageList = imageList;
         this.token = token;
     }
 
@@ -119,7 +120,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
        if(holder instanceof NormalViewHolder){
             final int Normal_position = position-1;
            /**
@@ -128,13 +129,44 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position)+"?imageView2/1/w/200/h/200/q/75|imageslim", new NetUtils.getBitmapCallback() {
+                    ((NormalViewHolder) holder).avatar.setTag(authorAvatarlist.get(Normal_position));
+                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position), new NetUtils.getBitmapCallback() {
                         @Override
-                        public void mBitmap(Bitmap mBitmap) {
+                        public void mBitmap(final Bitmap mBitmap) {
                             if(mBitmap==null){
-                                ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
+                                    ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
                             }else{
-                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                                ((NormalViewHolder) holder).avatar.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                       if(authorAvatarlist.get(Normal_position)==((NormalViewHolder) holder).avatar.getTag()){
+                                           ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                                       }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    Log.d(TAG, "run: "+imageList.get(Normal_position));
+//                    ((NormalViewHolder) holder).images.setTag(imageList.get(Normal_position));
+                    NetUtils.getBitmap(imageList.get(Normal_position), new NetUtils.getBitmapCallback() {
+                        @Override
+                        public void mBitmap(final Bitmap mBitmap) {
+                            if(mBitmap==null){
+                                ((NormalViewHolder) holder).images.setImageResource(R.drawable.zhanwei);
+                                ViewGroup.LayoutParams params = ((NormalViewHolder) holder).images.getLayoutParams();
+                                params.height=10;
+                                params.width=10;
+                                ((NormalViewHolder) holder).images.setLayoutParams(params);
+                            }else{
+                                ((NormalViewHolder) holder).images.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+//                                        if(imageList.get(Normal_position)==((NormalViewHolder) holder).images.getTag()){
+                                            ((NormalViewHolder) holder).images.setImageBitmap(mBitmap);
+//                                        }
+                                    }
+                                });
                             }
                         }
                     });
@@ -379,6 +411,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                                 exciting[i+20] = object.getInt("exciting");
                                 naive[i+20] = object.getInt("naive");
                                 recentlist.add(object.getString("recent"));
+                                imageList.add(object.getString("images"));
                                 authorAvatarlist.add(object.getString("authorAvatar"));
                                 answerCountlist[i+20] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
@@ -415,7 +448,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 
         ImageView avatar;
-//        ImageView images;
+        ImageView images;
         Button comments;
         ImageButton good;
         ImageButton bad;
@@ -432,7 +465,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             exciting = itemView.findViewById(R.id.main_good_number);
             naive = itemView.findViewById(R.id.main_bad_number);
             avatar = itemView.findViewById(R.id.main_user_avatar);
-
+            images = itemView.findViewById(R.id.main_showPicture);
             comments = itemView.findViewById(R.id.main_comments);
             good = itemView.findViewById(R.id.main_good);
             bad = itemView.findViewById(R.id.main_bad);
@@ -454,7 +487,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void refreshData(List<String> datelist1, int[] answerCountlist1, List<String> authorNamelist1,
                             List<String> titlelist1, List<String> contentlist1, int[] exciting1, int[] naive1,
                             List<String> recentlist1, boolean[] is_exciting1, boolean[] is_naive1, boolean[] is_favorite1
-            , final List<String> authorAvatarlist1, int[] questionId1) {
+            , final List<String> authorAvatarlist1, int[] questionId1,List<String> imagelist1) {
         Log.d("fxy", "Refresh");
             titlelist = titlelist1;
             contentlist = contentlist1;
@@ -469,6 +502,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             is_naive = is_naive1;
             is_favorite = is_favorite1;
             questionId = questionId1;
+            imageList = imagelist1;
     }
 
 }

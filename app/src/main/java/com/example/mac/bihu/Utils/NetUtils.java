@@ -116,8 +116,11 @@ public class NetUtils{
             mURL = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) mURL.openConnection();
             conn.setConnectTimeout(8000);
+            conn.setReadTimeout(8000);
+            conn.setRequestMethod("GET");
             conn.setDoInput(true);
             conn.setUseCaches(false);//不缓存
+            conn.connect();
             InputStream in = conn.getInputStream();
             bitmap = BitmapFactory.decodeStream(in);
             in.close();

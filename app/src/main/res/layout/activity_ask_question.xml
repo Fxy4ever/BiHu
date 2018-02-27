@@ -36,6 +36,12 @@
                 android:layout_height="match_parent"
                 android:gravity="right">
                 <Button
+                    android:id="@+id/ask_picture"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/picture"
+                    />
+                <Button
                     android:id="@+id/ask_commit"
                     android:paddingTop="5dp"
                     android:layout_width="wrap_content"
@@ -109,14 +115,17 @@
 
                 android:id="@+id/ask_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:background="@null"
                 android:textColor="#FFFFFF"
-                android:maxLines="30"
                 android:paddingLeft="20dp"
                 android:textColorHint="#A6B0BA"
                 android:hint="请输入正文"
                 />
+            <ImageView
+                android:id="@+id/ask_showPicture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

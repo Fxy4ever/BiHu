@@ -48,6 +48,8 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private int HEADER = 1;
     private int NORMAL = 0;
 
+    int page = 1;
+
 
     public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
@@ -381,7 +383,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
        }else{
 
        }
-        if((getItemViewType(position)==FOOTER&&position!=41)){
+        if((getItemViewType(position)==FOOTER)){
             loadmore();
         }
     }
@@ -393,7 +395,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             public void run() {
                 String url = "http://bihu.jay86.com/getQuestionList.php";
                 StringBuilder getItem = new StringBuilder();
-                getItem.append("page=1" +"&count=20"+"&token=" + token);
+                getItem.append("page="+ page +"&count=20"+"&token=" + token);
                 NetUtils.post(url, getItem.toString(), new NetUtils.Callback() {
                     @Override
                     public void onResponse(String response) {
@@ -408,19 +410,20 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                                 titlelist.add(object.getString("title"));
                                 contentlist.add(object.getString("content"));
                                 datelist.add(object.getString("date"));
-                                exciting[i+20] = object.getInt("exciting");
-                                naive[i+20] = object.getInt("naive");
+                                exciting[i+20*page] = object.getInt("exciting");
+                                naive[i+20*page] = object.getInt("naive");
                                 recentlist.add(object.getString("recent"));
                                 imageList.add(object.getString("images"));
                                 authorAvatarlist.add(object.getString("authorAvatar"));
-                                answerCountlist[i+20] = object.getInt("answerCount");
+                                answerCountlist[i+20*page] = object.getInt("answerCount");
                                 authorNamelist.add(object.getString("authorName"));
-                                is_exciting[i+20] = object.getBoolean("is_exciting");
-                                is_naive[i+20] = object.getBoolean("is_naive");
-                                is_favorite[i+20] = object.getBoolean("is_favorite");
-                                questionId[i+20] = object.getInt("id");
+                                is_exciting[i+20*page] = object.getBoolean("is_exciting");
+                                is_naive[i+20*page] = object.getBoolean("is_naive");
+                                is_favorite[i+20*page] = object.getBoolean("is_favorite");
+                                questionId[i+20*page] = object.getInt("id");
                             }
                             notifyDataSetChanged();
+                            page++;
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

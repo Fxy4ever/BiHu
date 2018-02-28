@@ -388,17 +388,17 @@ public class MainActivity extends AppCompatActivity {
         titlelist = new ArrayList<>();
         contentlist = new ArrayList<>();
         datelist = new ArrayList<>();
-        exciting = new int[40];
-        naive = new int[40];
+        exciting = new int[200];
+        naive = new int[200];
         recentlist = new ArrayList<>();
         imageList = new ArrayList<>();
-        answerCountlist = new int[40];
+        answerCountlist = new int[200];
         authorAvatarlist = new ArrayList<>();
         authorNamelist = new ArrayList<>();
-        is_exciting = new boolean[40];
-        is_naive = new boolean[40];
-        is_favorite = new boolean[40];
-        questionId = new int[40];
+        is_exciting = new boolean[200];
+        is_naive = new boolean[200];
+        is_favorite = new boolean[200];
+        questionId = new int[200];
     }
 
     public void initRecyclerView() {
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
         });
         layoutManager = new mLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        
+
     }
 //    public void setScrollListner(){
 //        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {

@@ -58,15 +58,15 @@ public class FavoriteActivity extends AppCompatActivity {
         contentlist = new ArrayList<>();
         imageslist = new ArrayList<>();
         datelist = new ArrayList<>();
-        exciting = new int[40];
-        naive = new int[40];
+        exciting = new int[200];
+        naive = new int[200];
         recentlist = new ArrayList<>();
-        answerCountlist = new int[40];
+        answerCountlist = new int[200];
         authorNamelist = new ArrayList<>();
         authorAvatarlist = new ArrayList<>();
-        is_exciting = new boolean[40];
-        is_naive = new boolean[40];
-        fav_questionId = new int[40];
+        is_exciting = new boolean[200];
+        is_naive = new boolean[200];
+        fav_questionId = new int[200];
         new Thread(new Runnable() {
             @Override
             public void run() {

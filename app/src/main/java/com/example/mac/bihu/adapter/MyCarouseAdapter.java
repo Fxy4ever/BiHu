@@ -31,6 +31,11 @@ public class MyCarouseAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         int newPosition = position % imageViewList.size();
+        View view = (View) imageViewList.get(position%5);
+        ViewGroup parent = (ViewGroup) view.getParent();
+        if(parent!=null){
+            parent.removeAllViews();
+        }
         ImageView imageView = (ImageView) imageViewList.get(newPosition);
         container.addView(imageView);
         return imageView;

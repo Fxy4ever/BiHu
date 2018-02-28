@@ -226,7 +226,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                        int status = jsonObject.getInt("status");
                        if(status==200){
                            ChangeAvatarActivity.this.finish();
-                           Toast.makeText(ChangeAvatarActivity.this,"更换成功",Toast.LENGTH_SHORT).show();
+                           Toast.makeText(ChangeAvatarActivity.this,"更换成功 请等待图片上传10s钟",Toast.LENGTH_SHORT).show();
                            Intent intent = new Intent(ChangeAvatarActivity.this,LoginActivity.class);
                            startActivity(intent);
                        }else{
@@ -256,12 +256,13 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
         //创建file对象 存储拍照后的图片 用getExternalCacheDir方法放在缓存目录 ／sdcard／Android/data/<packeageName>/cache
         //6.0后放在存储卡需要权限 放在缓存则不要
         File outputImage = new File(getExternalCacheDir(),"outputimg.jpg");
+
+        image_Path = com.example.mac.bihu.Utils.getPathUtil.getCachePath(ChangeAvatarActivity.this)+ "/outputimg.jpg";
         if(outputImage.exists()){
             outputImage.delete();
         }
         try {
             outputImage.createNewFile();
-            image_Path = String.valueOf(ChangeAvatarActivity.this.getCacheDir()) + "/outputimg.jpg";
             Log.d("fxy", "CameraPath=" + image_Path);
         } catch (IOException e) {
             e.printStackTrace();
@@ -322,7 +323,7 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                     Log.d("fxy", "Take photo");
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-//                        showImage.setImageBitmap(bitmap);
+                        showImage.setImageBitmap(bitmap);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

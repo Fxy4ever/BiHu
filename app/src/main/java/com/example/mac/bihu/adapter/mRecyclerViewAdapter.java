@@ -1,5 +1,6 @@
 package com.example.mac.bihu.adapter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,6 +30,10 @@ import static com.example.mac.bihu.Activity.MainActivity.questionId;
  */
 
 public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    private Context context;
+
+    private View mHeaderView;
+
     private List<String> datelist;
     private int[]        answerCountlist;
     private List<String> authorNamelist;
@@ -51,10 +56,14 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     int page = 1;
 
 
-    public mRecyclerViewAdapter(List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
+
+
+
+    public mRecyclerViewAdapter(Context context,List<String> datelist, int[] answerCountlist, List<String> authorNamelist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive,
                                 List<String> recentlist, boolean[] is_exciting, boolean[] is_naive, boolean[] is_favorite
     ,List<String> authorAvatarlist ,String token,List<String> imageList) {
+        this.context = context;
         this.datelist = datelist;
         this.answerCountlist = answerCountlist;
         this.authorNamelist = authorNamelist;
@@ -69,6 +78,10 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.authorAvatarlist = authorAvatarlist;
         this.imageList = imageList;
         this.token = token;
+    }
+
+    public void setmHeaderView(View mHeaderView) {
+        this.mHeaderView = mHeaderView;
     }
 
     @Override
@@ -89,9 +102,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
             FooterViewHolder holder = new FooterViewHolder(view);
             return holder;
         }else if(viewType == HEADER){
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_header_item,parent,false);
-            HeaderViewHolder holder = new HeaderViewHolder(view);
-            return holder;
+            return new HeaderViewHolder(mHeaderView);
         }else{
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_item, parent, false);
             NormalViewHolder holder = new NormalViewHolder(view);
@@ -177,7 +188,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             ((NormalViewHolder) holder).title.setText(titlelist.get(Normal_position));
             ((NormalViewHolder) holder).content.setText(contentlist.get(Normal_position));
-            ((NormalViewHolder) holder).date.setText(datelist.get(Normal_position));
+            ((NormalViewHolder) holder).date.setText(datelist.get(Normal_position)+"发布");
             ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[Normal_position]));
             ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[Normal_position]));
             ((NormalViewHolder) holder).recent.setText(recentlist.get(Normal_position)+"更新");
@@ -388,6 +399,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+
     public void loadmore(){
         Log.d(TAG, "loadmore: ");
         new Thread(new Runnable() {
@@ -481,7 +493,6 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
     public class HeaderViewHolder extends RecyclerView.ViewHolder{
-
         public HeaderViewHolder(View itemView) {
             super(itemView);
         }

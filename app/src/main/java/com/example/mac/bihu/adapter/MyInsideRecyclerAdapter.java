@@ -84,7 +84,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                 }
             }).start();
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));
-            ((NormalViewHolder) holder).date.setText(datelist.get(position));
+            ((NormalViewHolder) holder).date.setText(datelist.get(position)+"回答");
             ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[position]));
             ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));

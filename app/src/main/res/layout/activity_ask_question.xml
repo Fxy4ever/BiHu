@@ -8,6 +8,9 @@
     tools:context="com.example.mac.bihu.Activity.AskQuestionActivity">
 
     <android.support.v7.widget.CardView
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:cardElevation="5dp"
@@ -63,6 +66,10 @@
         />
 
     <android.support.v7.widget.CardView
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:cardBackgroundColor="#4586CA"
@@ -98,6 +105,10 @@
         />
 
     <android.support.v7.widget.CardView
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardBackgroundColor="#4586CA"
@@ -112,7 +123,7 @@
                 android:layout_height="10dp"/>
             <EditText
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-
+                android:gravity="top"
                 android:id="@+id/ask_content"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"

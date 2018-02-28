@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,6 +23,8 @@ import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
 import com.example.mac.bihu.Utils.mLayoutManager;
+import com.example.mac.bihu.adapter.MyCarouseAdapter;
 import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
 import com.example.mac.bihu.mUser;
 import com.example.mac.bihu.view.MyDialog;
@@ -42,13 +46,12 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity   {
     private mUser user;
 
 
     private TextView usernameTv;
     private CircleImageView userAvatar;
-
 
     private List<String> datelist;
     private int[] answerCountlist;
@@ -86,6 +89,15 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addQuestion1;
     private FloatingActionButton addQuestion2;
 
+    private ViewPager viewPager;
+    private List ImageviewList;
+    private int[] imageView_id;
+    private String[] dataList;
+    private TextView carouse_word;
+    private LinearLayout point_container;
+    private int prePosition = 0;
+    boolean isRunning = false;
+    private View header_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +107,12 @@ public class MainActivity extends AppCompatActivity {
         initFloatButton();
         initHeader();
         setToggle();
+
+        initView();
+        initData();
+        initAdapter();
+        initThread();
+
         setListener();
         initNewThread();
         initSwipe();
@@ -102,9 +120,95 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * 从这里开始初始轮播图下的东西
-     */
+    private void initView(){
+        header_view = LayoutInflater.from(this).inflate(R.layout.recyclerview_header_item,null);
+        viewPager = header_view.findViewById(R.id.viewpager);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                int newPosition = position % ImageviewList.size();
+                carouse_word.setText(dataList[newPosition]);
+                point_container.getChildAt(prePosition).setEnabled(false);
+                point_container.getChildAt(newPosition).setEnabled(true);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        point_container = header_view.findViewById(R.id.ll_point_container);
+        carouse_word = header_view.findViewById(R.id.carouse_tv1);
+    }
+    private void initData(){
+        imageView_id =new int[]{R.drawable.e,R.drawable.b,R.drawable.e,R.drawable.d,R.drawable.c};
+        dataList = new String[]{"欢迎来到逼乎社区",
+                "找不到的可以点右下角按钮",
+                "这是吉冈里帆",
+                "这是她代言的一个广告",
+                "这是Gakki啦"};
+        ImageviewList = new ArrayList<>();
+        ImageView imageView;
+        View pointView;
+        LinearLayout.LayoutParams layoutParams;
+        for(int i = 0;i<imageView_id.length;i++){
+            //加图片
+            imageView = new ImageView(this);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setBackgroundResource(imageView_id[i]);
+            ImageviewList.add(imageView);
+            //加白点
+            pointView = new View(this);
+            pointView.setBackgroundResource(R.drawable.point_select);
+            layoutParams = new LinearLayout.LayoutParams(10,10);//设置小白点的大小
+            if(i!=0)
+
+                layoutParams.leftMargin = 10;
+            pointView.setEnabled(false);
+            point_container.addView(pointView,layoutParams);
+
+
+        }
+    }
+    private void initAdapter(){
+        point_container.getChildAt(0).setEnabled(true);
+        //设置初始文字
+        carouse_word.setText(dataList[0]);
+        //设置初始的位置
+        prePosition = 0;
+        viewPager.setAdapter(new MyCarouseAdapter(ImageviewList));
+//        int pos = Integer.MAX_VALUE / 2 - (Integer.MAX_VALUE / 2 % imageViewList.size());
+        viewPager.setCurrentItem(500000);//设置一个0-MAX_VALUE的中间值
+    }
+    private void initThread(){
+        new Thread(){
+            public void run() {
+                isRunning = true;//每两秒销毁一次
+                while (isRunning){//这里要把线程睡眠和更新UI线程都包括在循环内 不然只会更新一次UI
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
+                        }
+                    });
+                }
+
+            }
+        }.start();
+    }
+
+
+
     public void init() {
         user = (mUser) getApplication();
         drawerLayout = findViewById(R.id.main_drawerLayout);
@@ -152,7 +256,11 @@ public class MainActivity extends AppCompatActivity {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                closeMenu(addQuestion);
+                if(fabOpened){
+                    closeMenu(addQuestion);
+                }else{
+
+                }
             }
         });
 
@@ -403,9 +511,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void initRecyclerView() {
         recyclerView = findViewById(R.id.main_rec);
-        adapter = new mRecyclerViewAdapter(datelist,answerCountlist,authorNamelist,titlelist,contentlist,exciting,naive,
+        adapter = new mRecyclerViewAdapter(MainActivity.this,datelist,answerCountlist,authorNamelist,titlelist,contentlist,exciting,naive,
                 recentlist,is_exciting,is_naive,is_favorite,authorAvatarlist,user.getToken(),imageList);
         recyclerView.setAdapter(adapter);
+        adapter.setmHeaderView(header_view);
         /**
          * item点击事件
          */
@@ -536,6 +645,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
 
 }
 

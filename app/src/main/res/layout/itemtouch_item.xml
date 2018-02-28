@@ -5,140 +5,150 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
+            app:cardCornerRadius="17dp"
+            app:cardElevation="2dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E9E9E8" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/ins_recy_user_avatar"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:paddingLeft="10dp"
-                        android:paddingTop="10dp"
-                         />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E9E9E8" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/ins_recy_username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/ins_recy_user_avatar"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
                             android:paddingLeft="10dp"
                             android:paddingTop="10dp"
-                            android:text="Username"
-                            android:textColor="#000000"
-                            android:textSize="16sp" />
+                            />
 
-                        <TextView
-                            android:id="@+id/ins_recy_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:text="2018-02-04 16:00:00"
-                            android:textSize="13sp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/ins_recy_username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="35dp"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="10dp"
+                                android:text="Username"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/ins_recy_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="10dp"
+                                android:text="2018-02-04 16:00:00"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#000000"
+                        android:textSize="20sp" />
 
+
+                    <TextView
+                        android:id="@+id/ins_recy_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="10"
+                        android:paddingLeft="20dp"
+                        android:text="This is a test"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#000000"
+                        android:textSize="22sp" />
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:gravity="right|center"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:focusable="false"
+                            android:id="@+id/ins_recy_good"
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:background="@drawable/good" />
+
+                        <TextView
+                            android:id="@+id/ins_recy_good_number"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:text="(0)"
+                            android:textSize="13sp" />
+
+                        <ImageButton
+                            android:focusable="false"
+                            android:id="@+id/ins_recy_bad"
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:background="@drawable/bad" />
+
+                        <TextView
+                            android:id="@+id/ins_recy_bad_number"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:text="(0)"
+                            android:textSize="13sp" />
+
+                        <ImageButton
+                            android:focusable="false"
+                            android:id="@+id/ins_recy_accept"
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:background="@drawable/like" />
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E9E9E8" />
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
-
-
-                <TextView
-                    android:id="@+id/ins_recy_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="10"
-                    android:paddingLeft="20dp"
-                    android:text="This is a test"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#000000"
-                    android:textSize="22sp" />
-
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:gravity="right|center"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:focusable="false"
-                        android:id="@+id/ins_recy_good"
-                        android:layout_width="23dp"
-                        android:layout_height="23dp"
-                        android:background="@drawable/good" />
-
-                    <TextView
-                        android:id="@+id/ins_recy_good_number"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:text="(0)"
-                        android:textSize="13sp" />
-
-                    <ImageButton
-                        android:focusable="false"
-                        android:id="@+id/ins_recy_bad"
-                        android:layout_width="23dp"
-                        android:layout_height="23dp"
-                        android:background="@drawable/bad" />
-
-                    <TextView
-                        android:id="@+id/ins_recy_bad_number"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:text="(0)"
-                        android:textSize="13sp" />
-
-                    <ImageButton
-                        android:focusable="false"
-                        android:id="@+id/ins_recy_accept"
-                        android:layout_width="23dp"
-                        android:layout_height="23dp"
-                        android:background="@drawable/like" />
-                    <TextView
-                        android:layout_width="20dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E9E9E8" />
             </LinearLayout>
-
-        </LinearLayout>
+        </android.support.v7.widget.CardView>
 
 
 

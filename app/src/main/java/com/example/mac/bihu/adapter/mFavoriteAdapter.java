@@ -163,10 +163,10 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             ((NormalViewHolder) holder).title.setText(titlelist.get(position));
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));
-            ((NormalViewHolder) holder).date.setText(datelist.get(position));
+            ((NormalViewHolder) holder).date.setText(datelist.get(position)+"发布");
             ((NormalViewHolder) holder).exciting.setText(String.valueOf(exciting[position]));
             ((NormalViewHolder) holder).naive.setText(String.valueOf(naive[position]));
-            ((NormalViewHolder) holder).recent.setText(recentlist.get(position));
+            ((NormalViewHolder) holder).recent.setText(recentlist.get(position)+"更新");
             ((NormalViewHolder) holder).answerCount.setText(String.valueOf(answerCountlist[position]));
             ((NormalViewHolder) holder).authorName.setText(authorNamelist.get(position));
             if(is_exciting[position]){

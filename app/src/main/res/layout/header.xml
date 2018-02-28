@@ -8,9 +8,11 @@
 
 
     <LinearLayout
+        android:id="@+id/navigation_header_background"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:orientation="vertical"
+        android:background="@drawable/navigation_back"
         android:gravity="center"
         >
         <de.hdodenhof.circleimageview.CircleImageView
@@ -20,20 +22,21 @@
             android:layout_height="75dp"
             android:layout_gravity="center"
             />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/navigation_header_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
-            android:layout_gravity="center"
-            android:text=""
-            android:textSize="20sp"/>
+            android:gravity="center">
+            <TextView
+                android:id="@+id/navigation_header_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:layout_gravity="center"
+                android:text=""
+                android:textSize="20sp"/>
+        </LinearLayout>
     </LinearLayout>
+
 
 </LinearLayout>
 

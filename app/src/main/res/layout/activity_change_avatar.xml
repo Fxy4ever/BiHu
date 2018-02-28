@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
             android:background="@drawable/btn_shape"
-            android:text="拍照(暂不可用)"/>
+            android:text="拍照上传"/>
         <View
             android:layout_width="15dp"
             android:layout_height="match_parent"/>

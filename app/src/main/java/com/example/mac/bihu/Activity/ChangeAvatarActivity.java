@@ -366,7 +366,11 @@ public class ChangeAvatarActivity extends AppCompatActivity implements  View.OnC
                     break;
             }
         }
+
     }
+
+
+
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void handleImageOnKitKat(Intent data) {

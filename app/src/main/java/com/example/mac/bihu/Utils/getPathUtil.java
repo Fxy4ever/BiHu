@@ -8,13 +8,12 @@ import android.os.Environment;
  */
 
 public class getPathUtil {
-    public static String getCachePath(Context context){
-        if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                ||!Environment.isExternalStorageRemovable()){
+    public static String getCachePath(Context context) {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
             return context.getExternalCacheDir().getPath();
         }else{
             return context.getCacheDir().getPath();
         }
-
     }
 }

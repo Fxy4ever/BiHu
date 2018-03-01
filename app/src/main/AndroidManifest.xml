@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mac.bihu">
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -42,6 +42,10 @@
         <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.RegistActivity" />
         <activity android:name=".Activity.FavoriteActivity" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".Activity.AskQuestionActivity" />
         <activity android:name=".Activity.itemTouchActivity" />
         <activity android:name=".Activity.AnswerActivity" />

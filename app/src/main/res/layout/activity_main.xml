@@ -60,55 +60,55 @@
                 android:visibility="gone"
                 android:id="@+id/cloud"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
 
                 <TextView
-                    android:background="#60000000"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:background="#60000000" />
 
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/main_addQuestion1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
                     android:layout_marginBottom="30dp"
                     android:layout_marginRight="85dp"
-                    android:src="@drawable/add"
                     android:backgroundTint="#4586CA"
-                    android:id="@+id/main_addQuestion1"
-                    app:fabSize="mini"
-                    />
+                    android:src="@drawable/add"
+                    app:fabSize="mini" />
+
                 <TextView
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="130dp"
-                    android:layout_marginRight="30dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:text="解决不了?"/>
+                    android:layout_above="@+id/main_addQuestion2"
+                    android:layout_alignLeft="@+id/main_addQuestion2"
+                    android:text="解决不了?"
+                    android:textColor="#FFFFFF" />
+
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/main_addQuestion2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
                     android:layout_marginBottom="85dp"
                     android:layout_marginRight="30dp"
-                    android:src="@drawable/add"
                     android:backgroundTint="#4586CA"
-                    android:id="@+id/main_addQuestion2"
-                    app:fabSize="mini"
-                    />
+                    android:src="@drawable/add"
+                    app:fabSize="mini" />
+
                 <TextView
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="42dp"
-                    android:layout_marginRight="130dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:text="提问"/>
+                    android:layout_alignTop="@+id/main_addQuestion1"
+                    android:layout_toLeftOf="@+id/main_addQuestion1"
+                    android:text="提问"
+                    android:textColor="#FFFFFF" />
 
 
             </RelativeLayout>

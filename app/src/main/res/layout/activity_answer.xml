@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:fitsSystemWindows="true"
     tools:context="com.example.mac.bihu.Activity.AnswerActivity">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -50,7 +52,8 @@
 
     <EditText
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#A6B0BA"
         android:hint="回答问题吧！"
         android:id="@+id/answer_content"
         android:layout_width="match_parent"

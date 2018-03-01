@@ -6,7 +6,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:windowFullscreen">true</item>
         <item name="android:textColorPrimary">@android:color/darker_gray</item>
         <item name="colorPrimary">@color/colorWhite</item>
     </style>
@@ -17,6 +16,6 @@
         <!--选中的颜色-->
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
-    1
+
 
 </resources>

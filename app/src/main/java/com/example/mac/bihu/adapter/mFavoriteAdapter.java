@@ -1,5 +1,6 @@
 package com.example.mac.bihu.adapter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +28,8 @@ import static com.example.mac.bihu.Activity.MainActivity.questionId;
  */
 
 public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    Context context;
+
     private List<String> imageslist;
     private List<String> datelist;
     private int[]        answerCountlist;
@@ -49,7 +52,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public mFavoriteAdapter(List<String> imageslist, List<String> datelist, List<String> recentlist,
                                 int[] answerCountlist, List<String> authorNamelist, List<String> authorAvatarlist,
                                 List<String> titlelist, List<String> contentlist, int[] exciting, int[] naive, List<String> recentlist1,
-                                boolean[] is_exciting, boolean[] is_naive,String token) {
+                                boolean[] is_exciting, boolean[] is_naive,String token,Context context) {
         this.imageslist = imageslist;
         this.datelist = datelist;
         this.recentlist = recentlist;
@@ -64,6 +67,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.is_exciting = is_exciting;
         this.is_naive = is_naive;
         this.token = token;
+        this.context = context;
     }
 
     @Override
@@ -124,7 +128,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(position),context,new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(final Bitmap mBitmap) {
                             if(mBitmap==null){
@@ -139,7 +143,7 @@ public class mFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             }
                         }
                     });
-                    NetUtils.getBitmap(imageslist.get(position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(imageslist.get(position),context, new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(final Bitmap mBitmap) {
                             if(mBitmap==null){

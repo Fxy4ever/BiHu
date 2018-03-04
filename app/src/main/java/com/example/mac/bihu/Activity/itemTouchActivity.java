@@ -133,7 +133,7 @@ public class itemTouchActivity extends AppCompatActivity {
     public void initRecyclerview(){
         recyclerView = findViewById(R.id.inside_recyclerview);
         adapter = new MyInsideRecyclerAdapter(datelist,authorNamelist,authorAvatarlist,contentlist,exciting,naive,
-                is_exciting,is_naive,best,answerId);
+                is_exciting,is_naive,best,answerId,itemTouchActivity.this);
         manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);

@@ -130,7 +130,7 @@ public class FavoriteActivity extends AppCompatActivity {
                             }
                             adapter = new mFavoriteAdapter(imageslist, datelist, recentlist,
                                     answerCountlist, authorNamelist, authorAvatarlist, titlelist,
-                                    contentlist, exciting, naive, recentlist, is_exciting, is_naive,user.getToken());
+                                    contentlist, exciting, naive, recentlist, is_exciting, is_naive,user.getToken(),FavoriteActivity.this);
                             recyclerView=findViewById(R.id.favorite_recyclerview);
                             layoutManager = new LinearLayoutManager(FavoriteActivity.this);
                             recyclerView.setLayoutManager(layoutManager);

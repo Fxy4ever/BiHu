@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity   {
 
 
 
-
     private void initView(){
         header_view = LayoutInflater.from(this).inflate(R.layout.recyclerview_header_item,null);
         viewPager = header_view.findViewById(R.id.viewpager);
@@ -187,7 +186,7 @@ public class MainActivity extends AppCompatActivity   {
         ImageView imageView;
         View pointView;
         LinearLayout.LayoutParams layoutParams;
-        for(int i = 0;i<imageView_id.length;i++){
+        for(int i = 0,len = imageView_id.length;i<len;i++){
             //加图片
             imageView = new ImageView(this);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -336,7 +335,7 @@ public class MainActivity extends AppCompatActivity   {
         String headerName = user.getUsername();
         usernameTv.setText(headerName);
         if (user.getAvatar().equals("null")) {
-            Log.d("test", "avatar1="+user.getAvatar());
+            Log.d("test", "avatar1=" + user.getAvatar());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -344,21 +343,14 @@ public class MainActivity extends AppCompatActivity   {
                 }
             });
         } else {
-            Log.d("test", "avatar2="+user.getAvatar());
-            new Thread(new Runnable() {
+            Log.d("test", "avatar2=" + user.getAvatar());
+            NetUtils.getBitmap(user.getAvatar(), this, new NetUtils.getBitmapCallback() {
                 @Override
-                public void run() {
-                    final Bitmap bitmap = NetUtils.getBitmap(user.getAvatar());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            userAvatar.setImageBitmap(bitmap);
-                        }
-                    });
+                public void mBitmap(Bitmap mBitmap) {
+                    userAvatar.setImageBitmap(mBitmap);
                 }
-            }).start();
+            });
         }
-
     }
 
 

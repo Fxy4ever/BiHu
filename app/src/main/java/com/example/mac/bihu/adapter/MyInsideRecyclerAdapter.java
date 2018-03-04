@@ -1,5 +1,6 @@
 package com.example.mac.bihu.adapter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,6 +27,8 @@ import static com.example.mac.bihu.adapter.mRecyclerViewAdapter.token;
  */
 
 public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    Context context;
+
     private List<String> datelist;
     private List<String> authorNamelist;
     private List<String> authorAvatarlist;
@@ -41,7 +44,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     public MyInsideRecyclerAdapter(List<String> datelist, List<String> authorNamelist,
                                    List<String> authorAvatarlist,List<String> contentlist,
                                    int[] exciting, int[] naive, boolean[] is_exciting
-                                , boolean[] is_naive,int[] best,int[] answerId) {
+                                , boolean[] is_naive,int[] best,int[] answerId,Context context) {
         this.datelist = datelist;
         this.authorNamelist = authorNamelist;
         this.authorAvatarlist = authorAvatarlist;
@@ -52,6 +55,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         this.is_naive = is_naive;
         this.best = best;
         this.answerId=answerId;
+        this.context = context;
     }
 
     @Override
@@ -71,7 +75,7 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(position), context,new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(Bitmap mBitmap) {
                             if(mBitmap==null){

@@ -133,7 +133,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder,int position) {
        if(holder instanceof NormalViewHolder){
             final int Normal_position = position-1;
            /**
@@ -143,7 +143,7 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                 @Override
                 public void run() {
                     ((NormalViewHolder) holder).avatar.setTag(authorAvatarlist.get(Normal_position));
-                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position), new NetUtils.getBitmapCallback() {
+                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position), context,new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(final Bitmap mBitmap) {
                             if(mBitmap==null){
@@ -161,11 +161,11 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                         }
                     });
                     Log.d(TAG, "run: "+imageList.get(Normal_position));
-//                    ((NormalViewHolder) holder).images.setTag(imageList.get(Normal_position));
-                    NetUtils.getBitmap(imageList.get(Normal_position), new NetUtils.getBitmapCallback() {
+                    ((NormalViewHolder) holder).images.setTag(imageList.get(Normal_position));
+                    NetUtils.getBitmap(imageList.get(Normal_position),context,new NetUtils.getBitmapCallback() {
                         @Override
                         public void mBitmap(final Bitmap mBitmap) {
-                            if(mBitmap==null){
+                            if(imageList.get(Normal_position).equals("null")){
                                 ((NormalViewHolder) holder).images.setImageResource(R.drawable.zhanwei);
                                 ViewGroup.LayoutParams params = ((NormalViewHolder) holder).images.getLayoutParams();
                                 params.height=10;
@@ -175,9 +175,9 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                                 ((NormalViewHolder) holder).images.post(new Runnable() {
                                     @Override
                                     public void run() {
-//                                        if(imageList.get(Normal_position)==((NormalViewHolder) holder).images.getTag()){
+                                        if(imageList.get(Normal_position)==((NormalViewHolder) holder).images.getTag()){
                                             ((NormalViewHolder) holder).images.setImageBitmap(mBitmap);
-//                                        }
+                                        }
                                     }
                                 });
                             }

@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
+import com.example.mac.bihu.Utils.NetWorkUtil;
 import com.example.mac.bihu.Utils.mLayoutManager;
 import com.example.mac.bihu.adapter.MyCarouseAdapter;
 import com.example.mac.bihu.adapter.mRecyclerViewAdapter;
@@ -111,15 +112,21 @@ public class MainActivity extends AppCompatActivity   {
         initHeader();
         setToggle();
 
-        initView();
-        initData();
-        initAdapter();
-        initThread();
+        if(NetWorkUtil.isNetAvailable(MainActivity.this)){
+            initView();
+            initData();
+            initAdapter();
+            initThread();
 
-        setListener();
-        initNewThread();
-        initSwipe();
-        Toast.makeText(MainActivity.this, "欢迎来到Bihu", Toast.LENGTH_LONG).show();
+            setListener();
+            initNewThread();
+            initSwipe();
+            Toast.makeText(MainActivity.this, "欢迎来到Bihu", Toast.LENGTH_LONG).show();
+
+        }else{
+            Toast.makeText(MainActivity.this, "网络失败！", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void initCenjin(){

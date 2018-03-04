@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
+import com.example.mac.bihu.Utils.NetWorkUtil;
 import com.example.mac.bihu.mUser;
 
 import org.json.JSONException;
@@ -42,7 +43,9 @@ public class LoginActivity extends AppCompatActivity  {
         initView();
         RememberPass();
         initButton();
-
+        if(!NetWorkUtil.isNetAvailable(this)){
+            Toast.makeText(this,"网络阻塞 请检查网络连接",Toast.LENGTH_SHORT).show();
+        }
     }
     private void initCenjin(){
         if (Build.VERSION.SDK_INT >= 21) {

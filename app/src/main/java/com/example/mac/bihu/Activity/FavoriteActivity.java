@@ -10,11 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.mac.bihu.R;
 import com.example.mac.bihu.Utils.NetUtils;
-import com.example.mac.bihu.Utils.NetWorkUtil;
 import com.example.mac.bihu.adapter.mFavoriteAdapter;
 import com.example.mac.bihu.mUser;
 
@@ -54,11 +52,7 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
         initCenjin();
-        if(NetWorkUtil.isNetAvailable(this)){
-            initThread();
-        }else{
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_LONG).show();
-        }
+        initThread();
         init();
         initToolbar();
     }

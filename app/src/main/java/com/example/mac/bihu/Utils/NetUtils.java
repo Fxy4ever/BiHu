@@ -148,7 +148,7 @@ public class NetUtils{
         File file = new File(getPathUtil.getCachePath(context)+"/"+name+".png");
         try {
                 FileOutputStream fos = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG,100,fos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
                 fos.flush();
                 fos.close();
         } catch (FileNotFoundException e) {

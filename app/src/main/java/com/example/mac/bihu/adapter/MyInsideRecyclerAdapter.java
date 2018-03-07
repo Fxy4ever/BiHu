@@ -75,16 +75,21 @@ public class MyInsideRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NetUtils.getBitmap(authorAvatarlist.get(position), context,new NetUtils.getBitmapCallback() {
-                        @Override
-                        public void mBitmap(Bitmap mBitmap) {
-                            if(mBitmap==null){
-                                ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
-                            }else{
-                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                    if(!authorAvatarlist.get(position).equals("http://p4wk0ha8y.bkt.clouddn.com/1520408915146") ){
+                        NetUtils.getBitmap(authorAvatarlist.get(position), context,new NetUtils.getBitmapCallback() {
+                            @Override
+                            public void mBitmap(Bitmap mBitmap) {
+                                if(mBitmap==null){
+                                    ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
+                                }else{
+                                    ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }else{
+                        ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
+                    }
+
                 }
             }).start();
             ((NormalViewHolder) holder).content.setText(contentlist.get(position));

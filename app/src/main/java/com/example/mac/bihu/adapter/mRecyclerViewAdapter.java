@@ -139,27 +139,32 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
            /**
             * 绑定数据
             */
+           Log.d(TAG, authorAvatarlist.get(Normal_position));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     ((NormalViewHolder) holder).avatar.setTag(authorAvatarlist.get(Normal_position));
-                    NetUtils.getBitmap(authorAvatarlist.get(Normal_position), context,new NetUtils.getBitmapCallback() {
-                        @Override
-                        public void mBitmap(final Bitmap mBitmap) {
-                            if(mBitmap==null){
+                    if(!authorAvatarlist.get(Normal_position).equals("http://p4wk0ha8y.bkt.clouddn.com/1520408915146")){
+                        NetUtils.getBitmap(authorAvatarlist.get(Normal_position), context,new NetUtils.getBitmapCallback() {
+                            @Override
+                            public void mBitmap(final Bitmap mBitmap) {
+                                if(mBitmap==null){
                                     ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
-                            }else{
-                                ((NormalViewHolder) holder).avatar.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                       if(authorAvatarlist.get(Normal_position)==((NormalViewHolder) holder).avatar.getTag()){
-                                           ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
-                                       }
-                                    }
-                                });
+                                }else{
+                                    ((NormalViewHolder) holder).avatar.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(authorAvatarlist.get(Normal_position)==((NormalViewHolder) holder).avatar.getTag()){
+                                                ((NormalViewHolder) holder).avatar.setImageBitmap(mBitmap);
+                                            }
+                                        }
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+                    }else{
+                        ((NormalViewHolder) holder).avatar.setImageResource(R.mipmap.ic_launcher_round);
+                    }
                     Log.d(TAG, "run: "+imageList.get(Normal_position));
                     ((NormalViewHolder) holder).images.setTag(imageList.get(Normal_position));
                     NetUtils.getBitmap(imageList.get(Normal_position),context,new NetUtils.getBitmapCallback() {
@@ -168,8 +173,8 @@ public class mRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.View
                             if(imageList.get(Normal_position).equals("null")){
                                 ((NormalViewHolder) holder).images.setImageResource(R.drawable.zhanwei);
                                 ViewGroup.LayoutParams params = ((NormalViewHolder) holder).images.getLayoutParams();
-                                params.height=10;
-                                params.width=10;
+                                params.height=1;
+                                params.width=1;
                                 ((NormalViewHolder) holder).images.setLayoutParams(params);
                             }else{
                                 ((NormalViewHolder) holder).images.post(new Runnable() {

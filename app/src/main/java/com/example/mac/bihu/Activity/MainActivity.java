@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity   {
         initNewThread();
         initSwipe();
         Toast.makeText(MainActivity.this, "欢迎来到Bihu", Toast.LENGTH_LONG).show();
-
     }
 
     private void initCenjin(){

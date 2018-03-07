@@ -127,8 +127,8 @@
                     <ImageView
                         android:scaleType="fitCenter"
                         android:id="@+id/main_showPicture"
-                        android:layout_width="300dp"
-                        android:layout_height="300dp"
+                        android:layout_width="400dp"
+                        android:layout_height="wrap_content"
                         />
 
                 </LinearLayout>

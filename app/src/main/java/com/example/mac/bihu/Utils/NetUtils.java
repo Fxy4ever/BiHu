@@ -106,7 +106,7 @@ public class NetUtils{
     public static Bitmap loadBitmap(final String url,Context context) {
         String name;
         if(url.contains("?")){
-            name = url.substring(url.indexOf("image"),url.lastIndexOf("?"));
+            name = url.substring(url.indexOf("com/"),url.lastIndexOf("?"));
         }else{
             String[] names = url.split("com/");
             name = names[names.length-1];
@@ -140,7 +140,7 @@ public class NetUtils{
     public static void saveBitmap(Bitmap bitmap, String url, Context context){
         String name;
         if(url.contains("?")){
-            name = url.substring(url.indexOf("image"),url.lastIndexOf("?"));
+            name = url.substring(url.indexOf("com/"),url.lastIndexOf("?"));
         }else{
             String[] names = url.split("com/");
             name = names[names.length-1];
@@ -148,7 +148,7 @@ public class NetUtils{
         File file = new File(getPathUtil.getCachePath(context)+"/"+name+".png");
         try {
                 FileOutputStream fos = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,50,fos);
                 fos.flush();
                 fos.close();
         } catch (FileNotFoundException e) {

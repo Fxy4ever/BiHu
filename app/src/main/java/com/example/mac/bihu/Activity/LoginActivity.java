@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity  {
         if(!NetWorkUtil.isNetAvailable(this)){
             Toast.makeText(this,"网络阻塞 请检查网络连接",Toast.LENGTH_SHORT).show();
         }
+
     }
     private void initCenjin(){
         if (Build.VERSION.SDK_INT >= 21) {
@@ -90,6 +91,8 @@ public class LoginActivity extends AppCompatActivity  {
             rememberPass.setChecked(true);//很重要
         }
     }
+
+    
     public void initButton(){
 
         login_btn.setOnClickListener(new View.OnClickListener() {

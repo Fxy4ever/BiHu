@@ -455,7 +455,11 @@ public class MainActivity extends AppCompatActivity   {
 
                         break;
                     case R.id.little_item3:
-                        Intent intent4 = new Intent(MainActivity.this, LoginActivity.class);
+                        Intent intent4 = new Intent();
+                        intent4.setClass(MainActivity.this,LoginActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("isBack",true);
+                        intent4.putExtras(bundle);
                         startActivity(intent4);
                         MainActivity.this.finish();
                         break;

@@ -620,6 +620,7 @@ public class MainActivity extends AppCompatActivity   {
                 recentlist.clear();
                 authorNamelist.clear();
                 imageList.clear();
+                authorAvatarlist.clear();
                 for (int i = 0; i < titlelist.size(); i++) {
                     exciting[i] = 0;
                     naive[i] = 0;
@@ -629,6 +630,7 @@ public class MainActivity extends AppCompatActivity   {
                     is_favorite[i] = false;
                     questionId[i] = 0;
                 }
+                recyclerView.removeAllViews();
                 String url = "http://bihu.jay86.com/getQuestionList.php";
                 StringBuilder getItem = new StringBuilder();
                 String token = user.getToken();
